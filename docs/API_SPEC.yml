@@ -1,0 +1,417 @@
+openapi: 3.0.3
+info:
+  title: MindTrack API
+  description: >-
+    一個旨在幫助使用者追蹤好習慣、記錄每日心情，並透過視覺化洞察揭示行為與感受之間關聯的 Web
+    應用程式。我們的願景是打造一個最直覺、最富有洞察力的個人成長工具。
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v1
+    description: 本地開發伺服器
+  - url: https://api.mindtrack.app/api/v1
+    description: 生產環境伺服器
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: 註冊新使用者
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+            examples:
+              default:
+                value:
+                  email: alice@example.com
+                  password: 'strongpassword123'
+      responses:
+        '201':
+          description: 使用者成功建立
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: 使用者登入
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+            examples:
+              default:
+                value:
+                  email: alice@example.com
+                  password: 'strongpassword123'
+      responses:
+        '200':
+          description: 登入成功，返回 JWT
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /habits:
+    get:
+      tags:
+        - Habits
+      summary: 獲取當前使用者的所有習慣
+      operationId: listHabits
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/QueryLimit'
+        - $ref: '#/components/parameters/QueryOffset'
+      responses:
+        '200':
+          description: 成功返回習慣列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Habit'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Habits
+      summary: 建立一個新習慣
+      operationId: createHabit
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabitInput'
+            examples:
+              default:
+                value:
+                  name: '每日運動 30 分鐘'
+      responses:
+        '201':
+          description: 習慣成功建立
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /habits/{habitId}:
+    parameters:
+      - name: habitId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Habits
+      summary: 根據 ID 獲取特定習慣
+      operationId: getHabitById
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 成功返回習慣詳情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      tags:
+        - Habits
+      summary: 根據 ID 更新特定習慣
+      operationId: updateHabit
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabitInput'
+      responses:
+        '200':
+          description: 習慣成功更新
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Habits
+      summary: 根據 ID 刪除特定習慣
+      operationId: deleteHabit
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: 習慣成功刪除，無返回內容
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /habit-logs:
+    post:
+      tags:
+        - Habit Logs
+      summary: 為指定習慣新增一筆完成紀錄 (打卡)
+      operationId: createHabitLog
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabitLogInput'
+            examples:
+              default:
+                value:
+                  habit_id: 1
+                  log_date: '2025-08-26'
+      responses:
+        '201':
+          description: 成功建立打卡紀錄
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HabitLog'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /mood-logs:
+    post:
+      tags:
+        - Mood Logs
+      summary: 新增或更新當日的心情紀錄
+      operationId: createOrUpdateMoodLog
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoodLogInput'
+            examples:
+              default:
+                value:
+                  rating: 5
+                  notes: '今天完成了重要專案，心情很好！'
+                  log_date: '2025-08-26'
+      responses:
+        '200':
+          description: 成功更新今日心情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoodLog'
+        '201':
+          description: 成功新增今日心情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoodLog'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    QueryLimit:
+      name: limit
+      in: query
+      description: 一次請求返回的最大項目數
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 100
+    QueryOffset:
+      name: offset
+      in: query
+      description: 用於分頁的查詢偏移量
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+
+  responses:
+    UnauthorizedError:
+      description: 認證失敗或缺少憑證
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: AUTH_001
+            message: Authentication token is missing or invalid.
+    NotFoundError:
+      description: 找不到指定的資源
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: NOT_FOUND_001
+            message: The requested resource was not found.
+    ValidationError:
+      description: 請求的資料格式無效
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: VALIDATE_001
+            message: Email format is invalid.
+
+  schemas:
+    UserCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Habit:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    HabitInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: '閱讀 30 分鐘'
+
+    HabitLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        habit_id:
+          type: integer
+        log_date:
+          type: string
+          format: date
+
+    HabitLogInput:
+      type: object
+      properties:
+        habit_id:
+          type: integer
+        log_date:
+          type: string
+          format: date
+
+    MoodLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        notes:
+          type: string
+        log_date:
+          type: string
+          format: date
+
+    MoodLogInput:
+      type: object
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        notes:
+          type: string
+        log_date:
+          type: string
+          format: date
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
