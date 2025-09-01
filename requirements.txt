@@ -1,8 +1,9 @@
+# Production Dependencies
 Flask
-Flask-SQLAlchemy
 Flask-Migrate
-python-dotenv
-Flask-Cors
-Flask-JWT-Extended
-Werkzeug
+Flask-SQLAlchemy
 Flask-Swagger-UI
+python-dotenv
+
+# Development Dependencies
+flake8
