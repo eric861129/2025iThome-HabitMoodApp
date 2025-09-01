@@ -55,12 +55,13 @@ def create_mood():
     db.session.add(new_mood)
     db.session.commit()
 
+    log_date_iso = (new_mood.log_date.isoformat()
+                    if new_mood.log_date else None)
     response_data = {
         "id": new_mood.id,
         "mood_score": new_mood.rating,
         "notes": new_mood.notes,
-        "log_date": (new_mood.log_date.isoformat()
-                     if new_mood.log_date else None),
+        "log_date": log_date_iso,
     }
     return jsonify(response_data), 201
 
@@ -79,7 +80,9 @@ def get_mood(mood_id):
         "id": mood.id,
         "mood_score": mood.rating,
         "notes": mood.notes,
-        "log_date": mood.log_date.isoformat() if mood.log_date else None,
+        "log_date": mood.log_date.isoformat() 
+        if mood.log_date 
+        else None,
     }), 200
 
 
