@@ -3,10 +3,11 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
-from app.models import Habit, HabitLog, User
+from app.models import Habit, HabitLog
 from datetime import datetime
 
 habits_bp = Blueprint('habits_bp', __name__, url_prefix='/api/v1/habits')
+
 
 @habits_bp.route('', methods=['GET'])
 @jwt_required()
@@ -20,10 +21,12 @@ def list_habits():
             "name": habit.name,
             "description": habit.description,
             "frequency": habit.frequency,
-            "start_date": habit.start_date.isoformat() if habit.start_date else None,
+            "start_date": habit.start_date.isoformat()
+            if habit.start_date else None,
             "end_date": habit.end_date.isoformat() if habit.end_date else None,
         } for habit in habits
     ]), 200
+
 
 @habits_bp.route('', methods=['POST'])
 @jwt_required()
@@ -41,8 +44,10 @@ def create_habit():
         return jsonify({"message": "Missing name or frequency"}), 400
 
     try:
-        start_date = datetime.fromisoformat(start_date_str) if start_date_str else None
-        end_date = datetime.fromisoformat(end_date_str) if end_date_str else None
+        start_date = datetime.fromisoformat(start_date_str) \
+            if start_date_str else None
+        end_date = datetime.fromisoformat(end_date_str) \
+            if end_date_str else None
     except ValueError:
         return jsonify({"message": "Invalid date format. Use YYYY-MM-DD"}), 400
 
@@ -62,9 +67,12 @@ def create_habit():
         "name": new_habit.name,
         "description": new_habit.description,
         "frequency": new_habit.frequency,
-        "start_date": new_habit.start_date.isoformat() if new_habit.start_date else None,
-        "end_date": new_habit.end_date.isoformat() if new_habit.end_date else None,
+        "start_date": new_habit.start_date.isoformat()
+        if new_habit.start_date else None,
+        "end_date": new_habit.end_date.isoformat()
+        if new_habit.end_date else None,
     }), 201
+
 
 @habits_bp.route('/<int:habit_id>', methods=['GET'])
 @jwt_required()
@@ -81,9 +89,11 @@ def get_habit(habit_id):
         "name": habit.name,
         "description": habit.description,
         "frequency": habit.frequency,
-        "start_date": habit.start_date.isoformat() if habit.start_date else None,
+        "start_date": habit.start_date.isoformat()
+        if habit.start_date else None,
         "end_date": habit.end_date.isoformat() if habit.end_date else None,
     }), 200
+
 
 @habits_bp.route('/<int:habit_id>', methods=['PUT'])
 @jwt_required()
@@ -96,22 +106,31 @@ def update_habit(habit_id):
         return jsonify({"message": "Habit not found"}), 404
 
     data = request.get_json()
-    
-    if 'name' in data: habit.name = data['name']
-    if 'description' in data: habit.description = data['description']
-    if 'frequency' in data: habit.frequency = data['frequency']
-    
+
+    if 'name' in data:
+        habit.name = data['name']
+    if 'description' in data:
+        habit.description = data['description']
+    if 'frequency' in data:
+        habit.frequency = data['frequency']
+
     if 'start_date' in data:
         try:
-            habit.start_date = datetime.fromisoformat(data['start_date']) if data['start_date'] else None
+            habit.start_date = datetime.fromisoformat(data['start_date']) \
+                if data['start_date'] else None
         except ValueError:
-            return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD"}), 400
-    
+            return jsonify({
+                "message": "Invalid start_date format. Use YYYY-MM-DD"
+            }), 400
+
     if 'end_date' in data:
         try:
-            habit.end_date = datetime.fromisoformat(data['end_date']) if data['end_date'] else None
+            habit.end_date = datetime.fromisoformat(data['end_date']) \
+                if data['end_date'] else None
         except ValueError:
-            return jsonify({"message": "Invalid end_date format. Use YYYY-MM-DD"}), 400
+            return jsonify({
+                "message": "Invalid end_date format. Use YYYY-MM-DD"
+            }), 400
 
     db.session.commit()
 
@@ -120,9 +139,11 @@ def update_habit(habit_id):
         "name": habit.name,
         "description": habit.description,
         "frequency": habit.frequency,
-        "start_date": habit.start_date.isoformat() if habit.start_date else None,
+        "start_date": habit.start_date.isoformat()
+        if habit.start_date else None,
         "end_date": habit.end_date.isoformat() if habit.end_date else None,
     }), 200
+
 
 @habits_bp.route('/<int:habit_id>', methods=['DELETE'])
 @jwt_required()
@@ -138,6 +159,7 @@ def delete_habit(habit_id):
     db.session.commit()
 
     return '', 204
+
 
 @habits_bp.route('/<int:habit_id>/track', methods=['POST'])
 @jwt_required()
@@ -159,7 +181,9 @@ def track_habit(habit_id):
     try:
         log_date = datetime.fromisoformat(log_date_str)
     except ValueError:
-        return jsonify({"message": "Invalid log_date format. Use YYYY-MM-DD"}), 400
+        return jsonify({
+            "message": "Invalid log_date format. Use YYYY-MM-DD"
+        }), 400
 
     new_log = HabitLog(
         habit_id=habit.id,

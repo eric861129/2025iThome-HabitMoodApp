@@ -3,10 +3,11 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
-from app.models import MoodLog, User
+from app.models import MoodLog
 from datetime import datetime
 
 moods_bp = Blueprint('moods_bp', __name__, url_prefix='/api/v1/moods')
+
 
 @moods_bp.route('', methods=['GET'])
 @jwt_required()
@@ -22,6 +23,7 @@ def list_moods():
             "log_date": mood.log_date.isoformat() if mood.log_date else None,
         } for mood in moods
     ]), 200
+
 
 @moods_bp.route('', methods=['POST'])
 @jwt_required()
@@ -53,12 +55,15 @@ def create_mood():
     db.session.add(new_mood)
     db.session.commit()
 
-    return jsonify({
+    response_data = {
         "id": new_mood.id,
         "mood_score": new_mood.rating,
         "notes": new_mood.notes,
-        "log_date": new_mood.log_date.isoformat() if new_mood.log_date else None,
-    }), 201
+        "log_date": (new_mood.log_date.isoformat()
+                     if new_mood.log_date else None),
+    }
+    return jsonify(response_data), 201
+
 
 @moods_bp.route('/<int:mood_id>', methods=['GET'])
 @jwt_required()
@@ -77,6 +82,7 @@ def get_mood(mood_id):
         "log_date": mood.log_date.isoformat() if mood.log_date else None,
     }), 200
 
+
 @moods_bp.route('/<int:mood_id>', methods=['PUT'])
 @jwt_required()
 def update_mood(mood_id):
@@ -88,20 +94,25 @@ def update_mood(mood_id):
         return jsonify({"message": "Mood entry not found"}), 404
 
     data = request.get_json()
-    
+
     if 'mood_score' in data:
         mood_score = data['mood_score']
         if not (1 <= mood_score <= 5):
-            return jsonify({"message": "Mood score must be between 1 and 5"}), 400
+            return jsonify({
+                "message": "Mood score must be between 1 and 5"
+            }), 400
         mood.rating = mood_score
 
-    if 'notes' in data: mood.notes = data['notes']
-    
+    if 'notes' in data:
+        mood.notes = data['notes']
+
     if 'log_date' in data:
         try:
             mood.log_date = datetime.fromisoformat(data['log_date'])
         except ValueError:
-            return jsonify({"message": "Invalid log_date format. Use YYYY-MM-DD"}), 400
+            return jsonify({
+                "message": "Invalid log_date format. Use YYYY-MM-DD"
+            }), 400
 
     db.session.commit()
 
@@ -111,6 +122,7 @@ def update_mood(mood_id):
         "notes": mood.notes,
         "log_date": mood.log_date.isoformat() if mood.log_date else None,
     }), 200
+
 
 @moods_bp.route('/<int:mood_id>', methods=['DELETE'])
 @jwt_required()
