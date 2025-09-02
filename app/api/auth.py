@@ -78,7 +78,7 @@ def logout_user():
 
 
 @auth_bp.route('/refresh', methods=['POST'])
-@jwt_required(refresh=True)
+@jwt_required_conditional(refresh=True)
 def refresh_token():
     """使用刷新 Token 取得新的存取 Token"""
     identity = get_jwt_identity()

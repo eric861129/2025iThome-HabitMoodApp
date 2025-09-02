@@ -10,12 +10,15 @@ import os
 SWAGGER_URL = '/api/docs'
 
 
-def create_app():
+def create_app(config_object=None):
     """Application factory function."""
     app = Flask(__name__, instance_relative_config=True)
 
-    # 從 instance/config.py 載入設定
-    app.config.from_object('instance.config.Config')
+    if config_object:
+        app.config.from_object(config_object)
+    else:
+        # 從 instance/config.py 載入設定
+        app.config.from_object('instance.config.Config')
 
     # JWT 配置
     app.config["JWT_SECRET_KEY"] = "super-secret"
