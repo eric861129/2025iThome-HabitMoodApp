@@ -44,7 +44,8 @@ def create_mood():
     try:
         log_date = datetime.fromisoformat(log_date_str)
     except ValueError:
-        return jsonify({"message": "Invalid log_date format. Use YYYY-MM-DD"}), 400
+        return jsonify({"message": "Invalid log_date format. "
+                                   "Use YYYY-MM-DD"}), 400
 
     new_mood = MoodLog(
         user_id=user_id,
@@ -80,8 +81,8 @@ def get_mood(mood_id):
         "id": mood.id,
         "mood_score": mood.rating,
         "notes": mood.notes,
-        "log_date": mood.log_date.isoformat() 
-        if mood.log_date 
+        "log_date": mood.log_date.isoformat()
+        if mood.log_date
         else None,
     }), 200
 
