@@ -1,6 +1,6 @@
 import pytest
 from app import create_app
-from app.extensions import db
+from app.extensions import db, jwt
 from app.models import Habit, User
 from datetime import datetime
 from werkzeug.security import generate_password_hash
@@ -8,13 +8,31 @@ from unittest.mock import patch
 import json
 
 @pytest.fixture(scope='module')
-def app():
+def app(mock_jwt_auth):
+    def app():
     class TestConfig:
         TESTING = True
         SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
         JWT_SECRET_KEY = "super-secret"
 
     app = create_app(config_object=TestConfig)
+
+    # Manually mock jwt_required and get_jwt_identity on the jwt instance
+    with app.app_context():
+        from app.extensions import jwt as jwt_manager_instance
+
+        # Mock jwt_required
+        def mock_jwt_required(fn):
+            def wrapper(*args, **kwargs):
+                return fn(*args, **kwargs)
+            return wrapper
+        jwt_manager_instance.jwt_required = mock_jwt_required
+
+        # Mock get_jwt_identity
+        def mock_get_jwt_identity():
+            return 1
+        jwt_manager_instance.get_jwt_identity = mock_get_jwt_identity
+
     return app
 
 @pytest.fixture(scope='module')
@@ -31,10 +49,8 @@ def clean_db(app):
 
 # --- GET /habits Tests ---
 
-def test_get_all_habits_returns_empty_list_when_no_habits(client, clean_db, monkeypatch):
+def test_get_all_habits_returns_empty_list_when_no_habits(client, clean_db)
     # Arrange: Mock jwt_required and get_jwt_identity
-    monkeypatch.setattr('flask_jwt_extended.jwt_required', lambda f: f)
-    monkeypatch.setattr('flask_jwt_extended.get_jwt_identity', lambda: 1)
 
     # Arrange: No habits in the database
     # Act
@@ -44,10 +60,8 @@ def test_get_all_habits_returns_empty_list_when_no_habits(client, clean_db, monk
     assert response.status_code == 200
     assert response.json == []
 
-def test_get_all_habits_returns_list_of_habits(client, clean_db, monkeypatch):
+def test_get_all_habits_returns_list_of_habits(client, clean_db)
     # Arrange: Mock jwt_required and get_jwt_identity
-    monkeypatch.setattr('flask_jwt_extended.jwt_required', lambda f: f)
-    monkeypatch.setattr('flask_jwt_extended.get_jwt_identity', lambda: 1)
 
     # Arrange: Add habits to the database for the authenticated user (user_id=1)
     with client.application.app_context():
@@ -89,10 +103,8 @@ def test_get_all_habits_returns_list_of_habits(client, clean_db, monkeypatch):
 
 # --- POST /habits Tests ---
 
-def test_create_habit_successfully(client, clean_db, monkeypatch):
+def test_create_habit_successfully(client, clean_db)
     # Arrange: Mock jwt_required and get_jwt_identity
-    monkeypatch.setattr('flask_jwt_extended.jwt_required', lambda f: f)
-    monkeypatch.setattr('flask_jwt_extended.get_jwt_identity', lambda: 1)
 
     # Arrange: Ensure user exists for user_id=1
     with client.application.app_context():
@@ -120,10 +132,8 @@ def test_create_habit_successfully(client, clean_db, monkeypatch):
         assert created_habit.name == habit_data['name']
         assert created_habit.user_id == 1
 
-def test_create_habit_with_missing_name_returns_400(client, clean_db, monkeypatch):
+def test_create_habit_with_missing_name_returns_400(client, clean_db)
     # Arrange: Mock jwt_required and get_jwt_identity
-    monkeypatch.setattr('flask_jwt_extended.jwt_required', lambda f: f)
-    monkeypatch.setattr('flask_jwt_extended.get_jwt_identity', lambda: 1)
 
     # Arrange
     habit_data = {} # Missing 'name'
@@ -136,10 +146,8 @@ def test_create_habit_with_missing_name_returns_400(client, clean_db, monkeypatc
     assert 'message' in response.json
     assert 'code' in response.json # Based on ValidationError schema
 
-def test_create_habit_with_invalid_name_type_returns_400(client, clean_db, monkeypatch):
+def test_create_habit_with_invalid_name_type_returns_400(client, clean_db)
     # Arrange: Mock jwt_required and get_jwt_identity
-    monkeypatch.setattr('flask_jwt_extended.jwt_required', lambda f: f)
-    monkeypatch.setattr('flask_jwt_extended.get_jwt_identity', lambda: 1)
 
     # Arrange
     habit_data = {"name": 123} # Name as int, not string
