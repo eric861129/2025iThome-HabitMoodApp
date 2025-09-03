@@ -2,7 +2,7 @@
 
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
-from marshmallow import ValidationError # 導入 ValidationError
+from marshmallow import ValidationError  # 導入 ValidationError
 from app.extensions import db
 from app.models import User
 from app.schemas import UserSchema

@@ -1,6 +1,6 @@
 # app/api/moods.py
 
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request
 from app.extensions import db
 from app.models import MoodLog
 from app.schemas import MoodLogSchema
@@ -63,6 +63,11 @@ def get_mood(mood_id):
 def update_mood(mood_id):
     """更新特定心情紀錄"""
     user_id = 1
+    mood = MoodLog.query.filter_by(id=mood_id, user_id=user_id).first()
+
+    if not mood:
+        return jsonify({"message": "Mood entry not found"}), 404
+
     json_data = request.get_json()
 
     try:

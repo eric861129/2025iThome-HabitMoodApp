@@ -1,6 +1,6 @@
 # app/api/habits.py
 
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request
 from app.extensions import db
 from app.models import Habit, HabitLog
 from app.schemas import HabitSchema, HabitLogSchema
@@ -14,7 +14,6 @@ habit_log_schema = HabitLogSchema()
 
 
 @habits_bp.route('', methods=['GET'])
-
 def list_habits():
     """取得所有習慣"""
     user_id = 1
@@ -23,7 +22,6 @@ def list_habits():
 
 
 @habits_bp.route('', methods=['POST'])
-
 def create_habit():
     """建立新習慣"""
     user_id = 1
@@ -43,7 +41,6 @@ def create_habit():
 
 
 @habits_bp.route('/<int:habit_id>', methods=['GET'])
-
 def get_habit(habit_id):
     """取得特定習慣"""
     user_id = 1
@@ -56,7 +53,6 @@ def get_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>', methods=['PUT'])
-
 def update_habit(habit_id):
     """更新特定習慣"""
     user_id = 1
@@ -83,7 +79,6 @@ def update_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>', methods=['DELETE'])
-
 def delete_habit(habit_id):
     """刪除特定習慣"""
     user_id = 1
@@ -99,7 +94,6 @@ def delete_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>/track', methods=['POST'])
-
 def track_habit(habit_id):
     """追蹤習慣"""
     user_id = 1

@@ -3,8 +3,6 @@ from app import create_app
 from app.extensions import db
 from app.models import Habit, User
 from werkzeug.security import generate_password_hash
-from functools import wraps
-from unittest.mock import patch
 
 
 @pytest.fixture(scope='module')
@@ -13,7 +11,6 @@ def app():
     class TestConfig:
         TESTING = True
         SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-        # JWT_SECRET_KEY = "super-secret" # 移除這行
 
     app = create_app(config_object=TestConfig)
     return app
