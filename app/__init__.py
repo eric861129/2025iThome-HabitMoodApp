@@ -1,7 +1,7 @@
 # app/__init__.py
 
 from flask import Flask, send_from_directory
-from .extensions import db, migrate, cors, ma  # 移除 jwt
+from .extensions import db, migrate, cors, ma
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 
@@ -25,28 +25,28 @@ def create_app(config_object=None):
     cors.init_app(app)  # 初始化 CORS
     ma.init_app(app)  # 初始化 Marshmallow
 
-    # 在測試模式下，繞過 JWT 驗證
-    if app.config.get('TESTING'):
-        from functools import wraps
-
-        # 模擬 jwt_required 裝飾器工廠
-        def mock_jwt_required_factory(*args, **kwargs):
-            def mock_decorator(fn):
-                @wraps(fn)
-                def wrapper(*_args, **_kwargs):
-                    # 在測試模式下，模擬 JWT 驗證失敗
-                    from flask import abort
-                    abort(401)
-                return wrapper
-            return mock_decorator
-
-        def mock_get_jwt_identity():
-            return 1  # 固定使用者 ID
-
-        # 替換 JWT 相關函數
-        import flask_jwt_extended
-        flask_jwt_extended.jwt_required = mock_jwt_required_factory
-        flask_jwt_extended.get_jwt_identity = mock_get_jwt_identity
+    # 移除 JWT 相關的測試模擬程式碼
+    # if app.config.get('TESTING'):
+    #     from functools import wraps
+    #
+    #     # 模擬 jwt_required 裝飾器工廠
+    #     def mock_jwt_required_factory(*args, **kwargs):
+    #         def mock_decorator(fn):
+    #             @wraps(fn)
+    #             def wrapper(*_args, **_kwargs):
+    #                 # 在測試模式下，模擬 JWT 驗證失敗
+    #                 from flask import abort
+    #                 abort(401)
+    #             return wrapper
+    #         return mock_decorator
+    #
+    #     def mock_get_jwt_identity():
+    #         return 1  # 固定使用者 ID
+    #
+    #     # 替換 JWT 相關函數
+    #     import flask_jwt_extended
+    #     flask_jwt_extended.jwt_required = mock_jwt_required_factory
+    #     flask_jwt_extended.get_jwt_identity = mock_get_jwt_identity
 
     with app.app_context():
         # 導入 Blueprints
