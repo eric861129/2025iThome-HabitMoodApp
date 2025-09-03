@@ -9,3 +9,4 @@ marshmallow-sqlalchemy
 
 # Development Dependencies
 flake8
+pytest
