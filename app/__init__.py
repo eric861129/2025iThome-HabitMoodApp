@@ -21,7 +21,10 @@ def create_app(config_object=None):
         app.config.from_object('instance.config.Config')
 
     # JWT 配置
-    app.config["JWT_SECRET_KEY"] = "super-secret"
+    # 從環境變數讀取 JWT_SECRET_KEY，確保生產環境安全
+    app.config["JWT_SECRET_KEY"] = os.environ.get(
+        "JWT_SECRET_KEY", "super-secret-dev-key"
+    )
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
