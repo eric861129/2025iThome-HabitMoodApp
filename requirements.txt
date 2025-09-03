@@ -6,6 +6,7 @@ Flask-Swagger-UI
 python-dotenv
 flask-marshmallow
 marshmallow-sqlalchemy
+Flask-Cors
 
 # Development Dependencies
 flake8
