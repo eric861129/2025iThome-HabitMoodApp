@@ -1,7 +1,7 @@
 # app/models.py
 
 from .extensions import db
-from datetime import datetime
+from datetime import datetime, UTC
 
 
 class User(db.Model):
@@ -13,7 +13,7 @@ class User(db.Model):
     )
     password_hash = db.Column(db.String(256), nullable=False)
     created_at = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow
+        db.DateTime, nullable=False, default=datetime.now(UTC)
     )
 
     habits = db.relationship(
@@ -38,7 +38,7 @@ class Habit(db.Model):
     start_date = db.Column(db.Date, nullable=True)
     end_date = db.Column(db.Date, nullable=True)
     created_at = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow
+        db.DateTime, nullable=False, default=datetime.now(UTC)
     )
 
     logs = db.relationship(
@@ -57,7 +57,7 @@ class HabitLog(db.Model):
         db.Integer, nullable=False, default=1
     )  # 1 for done
     created_at = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow
+        db.DateTime, nullable=False, default=datetime.now(UTC)
     )
 
     __table_args__ = (
@@ -77,7 +77,7 @@ class MoodLog(db.Model):
     notes = db.Column(db.Text, nullable=True)
     log_date = db.Column(db.Date, nullable=False)
     created_at = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow
+        db.DateTime, nullable=False, default=datetime.now(UTC)
     )
 
     __table_args__ = (

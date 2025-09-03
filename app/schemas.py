@@ -2,6 +2,7 @@
 
 from .extensions import ma
 from .models import User, Habit, HabitLog, MoodLog
+from marshmallow import fields
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
@@ -13,6 +14,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
 
 class HabitSchema(ma.SQLAlchemyAutoSchema):
+    user_id = fields.Integer(load_only=True)
+
     class Meta:
         model = Habit
         load_instance = True

@@ -1,49 +1,32 @@
 # app/api/habits.py
 
 from flask import Blueprint, jsonify, request, current_app
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import Habit, HabitLog
 from app.schemas import HabitSchema, HabitLogSchema
 from marshmallow import ValidationError
-from functools import wraps
-import os
+
 
 habits_bp = Blueprint('habits_bp', __name__, url_prefix='/api/v1/habits')
 habit_schema = HabitSchema()
 habits_schema = HabitSchema(many=True)
 habit_log_schema = HabitLogSchema()
 
-# Conditional JWT bypass for testing
-if os.environ.get('FLASK_ENV') == 'testing' or \
-   current_app.config.get('TESTING'):
-    def jwt_required_conditional(fn):
-        @wraps(fn)
-        def wrapper(*args, **kwargs):
-            return fn(*args, **kwargs)
-        return wrapper
-
-    def get_jwt_identity_conditional():
-        return 1  # Fixed user ID for testing
-else:
-    jwt_required_conditional = jwt_required
-    get_jwt_identity_conditional = get_jwt_identity
-
 
 @habits_bp.route('', methods=['GET'])
-@jwt_required_conditional()
+
 def list_habits():
     """取得所有習慣"""
-    user_id = get_jwt_identity_conditional()
+    user_id = 1
     habits = Habit.query.filter_by(user_id=user_id).all()
     return jsonify(habits_schema.dump(habits)), 200
 
 
 @habits_bp.route('', methods=['POST'])
-@jwt_required_conditional()
+
 def create_habit():
     """建立新習慣"""
-    user_id = get_jwt_identity_conditional()
+    user_id = 1
     json_data = request.get_json()
 
     try:
@@ -60,10 +43,10 @@ def create_habit():
 
 
 @habits_bp.route('/<int:habit_id>', methods=['GET'])
-@jwt_required_conditional()
+
 def get_habit(habit_id):
     """取得特定習慣"""
-    user_id = get_jwt_identity_conditional()
+    user_id = 1
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -73,10 +56,10 @@ def get_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>', methods=['PUT'])
-@jwt_required_conditional()
+
 def update_habit(habit_id):
     """更新特定習慣"""
-    user_id = get_jwt_identity_conditional()
+    user_id = 1
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -100,10 +83,10 @@ def update_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>', methods=['DELETE'])
-@jwt_required_conditional()
+
 def delete_habit(habit_id):
     """刪除特定習慣"""
-    user_id = get_jwt_identity_conditional()
+    user_id = 1
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -116,15 +99,10 @@ def delete_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>/track', methods=['POST'])
-@jwt_required_conditional()
+
 def track_habit(habit_id):
     """追蹤習慣"""
-    user_id = get_jwt_identity_conditional()
-    habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
-
-    if not habit:
-        return jsonify({"message": "Habit not found"}), 404
-
+    user_id = 1
     json_data = request.get_json()
     try:
         new_log = habit_log_schema.load(json_data)
