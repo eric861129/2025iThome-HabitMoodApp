@@ -4,6 +4,8 @@ Flask-Migrate
 Flask-SQLAlchemy
 Flask-Swagger-UI
 python-dotenv
+flask-marshmallow
+marshmallow-sqlalchemy
 
 # Development Dependencies
 flake8

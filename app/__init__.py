@@ -1,7 +1,7 @@
 # app/__init__.py
 
 from flask import Flask, jsonify, send_from_directory
-from .extensions import db, migrate, cors, jwt
+from .extensions import db, migrate, cors, jwt, ma
 from datetime import timedelta
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
@@ -30,6 +30,7 @@ def create_app(config_object=None):
     migrate.init_app(app, db)
     cors.init_app(app)  # 初始化 CORS
     jwt.init_app(app)  # 初始化 JWT
+    ma.init_app(app)  # 初始化 Marshmallow
 
     # JWT 黑名單設定
     from .api.auth import JWT_BLOCKLIST
