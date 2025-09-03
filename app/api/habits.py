@@ -16,7 +16,7 @@ habit_log_schema = HabitLogSchema()
 @habits_bp.route('', methods=['GET'])
 def list_habits():
     """取得所有習慣"""
-    user_id = 1
+    user_id = 1  # noqa: F841
     habits = Habit.query.filter_by(user_id=user_id).all()
     return jsonify(habits_schema.dump(habits)), 200
 
@@ -24,7 +24,7 @@ def list_habits():
 @habits_bp.route('', methods=['POST'])
 def create_habit():
     """建立新習慣"""
-    user_id = 1
+    user_id = 1  # noqa: F841
     json_data = request.get_json()
 
     try:
@@ -43,7 +43,7 @@ def create_habit():
 @habits_bp.route('/<int:habit_id>', methods=['GET'])
 def get_habit(habit_id):
     """取得特定習慣"""
-    user_id = 1
+    user_id = 1  # noqa: F841
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -55,7 +55,7 @@ def get_habit(habit_id):
 @habits_bp.route('/<int:habit_id>', methods=['PUT'])
 def update_habit(habit_id):
     """更新特定習慣"""
-    user_id = 1
+    user_id = 1  # noqa: F841
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -81,7 +81,7 @@ def update_habit(habit_id):
 @habits_bp.route('/<int:habit_id>', methods=['DELETE'])
 def delete_habit(habit_id):
     """刪除特定習慣"""
-    user_id = 1
+    user_id = 1  # noqa: F841
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -96,7 +96,7 @@ def delete_habit(habit_id):
 @habits_bp.route('/<int:habit_id>/track', methods=['POST'])
 def track_habit(habit_id):
     """追蹤習慣"""
-    user_id = 1
+    user_id = 1  # noqa: F841
     json_data = request.get_json()
     try:
         new_log = habit_log_schema.load(json_data)

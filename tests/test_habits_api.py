@@ -35,7 +35,8 @@ def clean_db(app):
 # --- GET /habits Tests ---
 
 
-def test_get_all_habits_returns_empty_list_when_no_habits(client, clean_db, mock_jwt_auth):
+def test_get_all_habits_returns_empty_list_when_no_habits(client, clean_db,
+                                                          mock_jwt_auth):
     """Test that GET /habits returns an empty list when no habits exist."""
     # Arrange: No habits in the database
     # Act
@@ -46,7 +47,8 @@ def test_get_all_habits_returns_empty_list_when_no_habits(client, clean_db, mock
     assert response.json == []
 
 
-def test_get_all_habits_returns_list_of_habits(client, clean_db, mock_jwt_auth):
+def test_get_all_habits_returns_list_of_habits(client, clean_db,
+                                               mock_jwt_auth):
     """Test that GET /habits returns a list of habits for the user."""
     # Arrange: Add habits to the database
     # for the authenticated user (user_id=1)
@@ -121,7 +123,8 @@ def test_create_habit_successfully(client, clean_db, mock_jwt_auth):
         assert created_habit.user_id == 1
 
 
-def test_create_habit_with_missing_name_returns_400(client, clean_db, mock_jwt_auth):
+def test_create_habit_with_missing_name_returns_400(client, clean_db,
+                                                    mock_jwt_auth):
     """Test POST /habits with missing 'name' field results in a 400 error."""
     # Arrange
     habit_data = {"frequency": "daily"}  # Missing 'name'
@@ -135,8 +138,8 @@ def test_create_habit_with_missing_name_returns_400(client, clean_db, mock_jwt_a
     assert 'Missing data for required field.' in response.json['name']
 
 
-
-def test_create_habit_with_invalid_data_returns_400(client, clean_db, mock_jwt_auth):
+def test_create_habit_with_invalid_data_returns_400(client, clean_db,
+                                                    mock_jwt_auth):
     """
     Test that POST /habits with invalid data (e.g., name is not a string)
     returns a 400 Bad Request error.

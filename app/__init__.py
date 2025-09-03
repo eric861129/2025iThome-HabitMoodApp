@@ -1,8 +1,7 @@
 # app/__init__.py
 
-from flask import Flask, jsonify, send_from_directory
-from .extensions import db, migrate, cors, ma # 移除 jwt
-from datetime import timedelta
+from flask import Flask, send_from_directory
+from .extensions import db, migrate, cors, ma  # 移除 jwt
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 
@@ -24,7 +23,6 @@ def create_app(config_object=None):
     db.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app)  # 初始化 CORS
-    # jwt.init_app(app)  # 移除這行
     ma.init_app(app)  # 初始化 Marshmallow
 
     # 在測試模式下，繞過 JWT 驗證
