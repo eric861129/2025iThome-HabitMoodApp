@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>心境軌跡 (MindTrack) - 習慣追蹤器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- 側邊導覽列 (Side Navigation) -->
+      <aside class="sidebar-nav">
+        <div class="logo">
+          <svg
+            class="logo-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"
+            />
+          </svg>
+          <h2>MindTrack</h2>
+        </div>
+        <nav>
+          <ul class="nav-list">
+            <li class="nav-item active">
+              <a href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                習慣追蹤
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
+                  />
+                </svg>
+                洞察報告
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                  />
+                </svg>
+                設定
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- 主要內容區域 (Main Content Area) -->
+      <main class="main-content">
+        <!-- 頁面標頭 (PageHeader) -->
+        <header class="page-header">
+          <div>
+            <h1 id="page-title">今天的進度</h1>
+            <p id="page-subtitle" class="subtitle"></p>
+          </div>
+          <button class="btn btn-primary" id="add-habit-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            新增習慣
+          </button>
+        </header>
+
+        <!-- 習慣列表 (HabitList) -->
+        <section class="habit-list-container">
+          <div
+            class="habit-item"
+            tabindex="0"
+            role="button"
+            aria-pressed="false"
+          >
+            <div class="habit-checkbox">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="3"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4.5 12.75l6 6 9-13.5"
+                />
+              </svg>
+            </div>
+            <span class="habit-name">運動 30 分鐘</span>
+          </div>
+          <div
+            class="habit-item"
+            tabindex="0"
+            role="button"
+            aria-pressed="false"
+          >
+            <div class="habit-checkbox">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="3"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4.5 12.75l6 6 9-13.5"
+                />
+              </svg>
+            </div>
+            <span class="habit-name">閱讀 15 頁書</span>
+          </div>
+          <div
+            class="habit-item"
+            tabindex="0"
+            role="button"
+            aria-pressed="true"
+          >
+            <div class="habit-checkbox">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="3"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4.5 12.75l6 6 9-13.5"
+                />
+              </svg>
+            </div>
+            <span class="habit-name">冥想 10 分鐘</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- 新增習慣 Modal 視窗 -->
+    <div class="modal-overlay" id="add-habit-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3>建立你的新習慣</h3>
+          <button
+            class="close-button"
+            id="close-modal-btn"
+            aria-label="關閉視窗"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="habit-name-input">習慣名稱</label>
+            <input
+              type="text"
+              id="habit-name-input"
+              class="form-input"
+              placeholder="例如：喝 8 杯水"
+            />
+          </div>
+        </div>
+        <footer class="modal-actions">
+          <button class="btn" id="cancel-btn">取消</button>
+          <button class="btn btn-primary">儲存</button>
+        </footer>
+      </div>
+    </div>
+    <script src="script.js" defer></script>
+  </body>
+</html>
