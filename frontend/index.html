@@ -17,26 +17,27 @@
       <!-- 側邊導覽列 (Side Navigation) -->
       <aside class="sidebar-nav">
         <div class="logo-container">
-          <img src="./assets/logo.png" alt="MindTrack Logo" class="logo-img" />
-          <span class="logo-text">MindTrack</span>
+          <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 90 L30 30 L50 70 L70 30 L90 90" stroke="var(--primary-color)" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
         <nav>
           <ul class="nav-list" aria-label="主要導覽">
             <li class="nav-item active">
-              <a href="#">
+              <a href="#dashboard" data-page="dashboard-page">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M4 13h6v8H4v-8zm0-10h6v8H4V3zm10 6h6v8h-6V9zm0-6h6v4h-6V3z"></path></svg>
                 <span>儀表板</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#">
+              <a href="#review" data-page="review-page">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v5h-2V7zm0 6h2v2h-2v-2z"></path></svg>
                 <span>回顧</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
+              <a href="#settings" data-page="settings-page">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59-1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
                 <span>設定</span>
               </a>
             </li>
@@ -46,119 +47,373 @@
 
       <!-- 主要內容區域 (Main Content Area) -->
       <main class="main-content">
-        <!-- 頁面標頭 (PageHeader) -->
-        <header class="page-header">
-          <div>
-            <h1 id="page-title">今天的進度</h1>
-            <p id="page-subtitle" class="subtitle"></p>
-          </div>
-          <button class="btn btn-primary" id="add-habit-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+        <!-- Page: 儀表板 (Dashboard) -->
+        <section id="dashboard-page" class="page-content">
+          <header class="page-header">
+            <div>
+              <h1 id="page-title">今天的進度</h1>
+              <p id="page-subtitle" class="subtitle"></p>
+            </div>
+            <button class="btn btn-primary" id="add-habit-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              新增習慣
+            </button>
+          </header>
+
+          <div class="habit-list-container">
+            <div
+              class="habit-item"
+              tabindex="0"
+              role="button"
+              aria-pressed="false"
             >
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            新增習慣
-          </button>
-        </header>
+              <div class="habit-checkbox">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="3"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.5 12.75l6 6 9-13.5"
+                  />
+                </svg>
+              </div>
+              <span class="habit-name">運動 30 分鐘</span>
+            </div>
+            <div
+              class="habit-item"
+              tabindex="0"
+              role="button"
+              aria-pressed="false"
+            >
+              <div class="habit-checkbox">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="3"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.5 12.75l6 6 9-13.5"
+                  />
+                </svg>
+              </div>
+              <span class="habit-name">閱讀 15 頁書</span>
+            </div>
+            <div
+              class="habit-item completed"
+              tabindex="0"
+              role="button"
+              aria-pressed="true"
+            >
+              <div class="habit-checkbox">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="3"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.5 12.75l6 6 9-13.5"
+                  />
+                </svg>
+              </div>
+              <span class="habit-name">冥想 10 分鐘</span>
+            </div>
+          </div>
 
-        <!-- 習慣列表 (HabitList) -->
-        <section class="habit-list-container">
-          <div
-            class="habit-item"
-            tabindex="0"
-            role="button"
-            aria-pressed="false"
-          >
-            <div class="habit-checkbox">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="3"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4.5 12.75l6 6 9-13.5"
-                />
-              </svg>
+          <div class="mood-tracker-container">
+            <h3>今天感覺如何？</h3>
+            <div class="mood-selector">
+              <button class="mood-option" aria-label="開心">😊</button>
+              <button class="mood-option" aria-label="愉快">😄</button>
+              <button class="mood-option" aria-label="還好">🙂</button>
+              <button class="mood-option" aria-label="難過">😔</button>
+              <button class="mood-option" aria-label="生氣">😠</button>
             </div>
-            <span class="habit-name">運動 30 分鐘</span>
-          </div>
-          <div
-            class="habit-item"
-            tabindex="0"
-            role="button"
-            aria-pressed="false"
-          >
-            <div class="habit-checkbox">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="3"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4.5 12.75l6 6 9-13.5"
-                />
-              </svg>
+            <div class="mood-notes-container">
+              <textarea class="mood-notes-input" placeholder="記錄下今天的心情細節，有助於發現更深刻的洞察..." rows="3"></textarea>
+              <button class="btn btn-primary save-mood-btn">儲存心情</button>
             </div>
-            <span class="habit-name">閱讀 15 頁書</span>
-          </div>
-          <div
-            class="habit-item completed"
-            tabindex="0"
-            role="button"
-            aria-pressed="true"
-          >
-            <div class="habit-checkbox">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="3"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4.5 12.75l6 6 9-13.5"
-                />
-              </svg>
-            </div>
-            <span class="habit-name">冥想 10 分鐘</span>
           </div>
         </section>
 
-        <!-- 心情記錄區 (Mood Tracker) -->
-        <section class="mood-tracker-container">
-          <h3>今天感覺如何？</h3>
-          <div class="mood-selector">
-            <button class="mood-option" aria-label="開心">😊</button>
-            <button class="mood-option" aria-label="愉快">😄</button>
-            <button class="mood-option" aria-label="還好">🙂</button>
-            <button class="mood-option" aria-label="難過">😔</button>
-            <button class="mood-option" aria-label="生氣">😠</button>
+        <!-- Page: 回顧 (Review) -->
+        <section id="review-page" class="page-content hidden">
+          <header class="page-header">
+            <div>
+              <h1>洞察報告</h1>
+              <p class="subtitle">深入分析你的習慣與心情，發現內在連結。</p>
+            </div>
+          </header>
+
+          <!-- Section 1: Core Insight Chart -->
+          <div class="analysis-section">
+            <div class="analysis-header">
+              <h3>心情與習慣關聯圖</h3>
+              <div class="custom-select-wrapper">
+                <select class="habit-filter-select">
+                  <option value="all">所有習慣</option>
+                  <option value="habit-1">運動</option>
+                  <option value="habit-2">閱讀</option>
+                </select>
+              </div>
+            </div>
+            <div class="insight-chart-container">
+                <svg width="100%" height="350" viewBox="0 0 800 350" class="insight-chart" aria-labelledby="chart-title" role="img">
+                    <title id="chart-title">心情與習慣關聯圖表</title>
+                    <defs>
+                      <linearGradient id="mood-gradient" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="var(--primary-color)" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="var(--primary-color)" stop-opacity="0"/>
+                      </linearGradient>
+                      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                        <feOffset dx="2" dy="2" result="offsetblur"/>
+                        <feComponentTransfer>
+                          <feFuncA type="linear" slope="0.5"/>
+                        </feComponentTransfer>
+                        <feMerge>
+                          <feMergeNode/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                    </defs>
+        
+                    <!-- Grid Lines & Y-Axis Labels -->
+                    <g class="chart-grid">
+                      <text x="40" y="55" class="chart-label y-label">開心</text>
+                      <line x1="50" y1="50" x2="750" y2="50"></line>
+                      <text x="40" y="155" class="chart-label y-label">普通</text>
+                      <line x1="50" y1="150" x2="750" y2="150"></line>
+                      <text x="40" y="255" class="chart-label y-label">低落</text>
+                      <line x1="50" y1="250" x2="750" y2="250"></line>
+                    </g>
+        
+                    <!-- X-Axis Labels -->
+                    <g class="chart-labels x-labels">
+                      <text x="100" y="270">9/1</text>
+                      <text x="200" y="270">9/2</text>
+                      <text x="300" y="270">9/3</text>
+                      <text x="400" y="270">9/4</text>
+                      <text x="500" y="270">9/5</text>
+                      <text x="600" y="270">9/6</text>
+                      <text x="700" y="270">9/7</text>
+                    </g>
+        
+                    <!-- Annotation -->
+                    <g class="chart-annotation">
+                        <line x1="500" y1="40" x2="500" y2="250"></line>
+                        <text x="505" y="55">專案截止日</text>
+                    </g>
+        
+                    <!-- Data Paths -->
+                    <path d="M100,150 L200,100 L300,180 L400,120 L500,90 L600,130 L700,100" class="chart-area" />
+                    <path d="M100,150 L200,100 L300,180 L400,120 L500,90 L600,130 L700,100" class="chart-line mood" filter="url(#shadow)" />
+        
+                    <!-- Data Points -->
+                    <g class="chart-dots mood-dots">
+                      <g class="data-point" transform="translate(100, 150)">
+                        <circle r="8"></circle>
+                        <text class="data-label">3</text>
+                      </g>
+                      <g class="data-point" transform="translate(200, 100)">
+                        <circle r="8"></circle>
+                        <text class="data-label">4</text>
+                      </g>
+                      <g class="data-point" transform="translate(300, 180)">
+                        <circle r="8"></circle>
+                        <text class="data-label">2</text>
+                      </g>
+                      <g class="data-point" transform="translate(400, 120)">
+                        <circle r="8"></circle>
+                        <text class="data-label">4</text>
+                      </g>
+                      <g class="data-point" transform="translate(500, 90)">
+                        <circle r="8"></circle>
+                        <text class="data-label">5</text>
+                      </g>
+                      <g class="data-point" transform="translate(600, 130)">
+                        <circle r="8"></circle>
+                        <text class="data-label">3</text>
+                      </g>
+                      <g class="data-point" transform="translate(700, 100)">
+                        <circle r="8"></circle>
+                        <text class="data-label">4</text>
+                      </g>
+                    </g>
+                    <!-- Habit Markers -->
+                    <g class="habit-markers">
+                        <use href="#habit-icon-1" x="192" y="280" class="habit-marker habit-1" />
+                        <use href="#habit-icon-1" x="392" y="280" class="habit-marker habit-1" />
+                        <use href="#habit-icon-2" x="292" y="300" class="habit-marker habit-2" />
+                        <use href="#habit-icon-1" x="492" y="280" class="habit-marker habit-1" />
+                        <use href="#habit-icon-2" x="492" y="300" class="habit-marker habit-2" />
+                    </g>
+                  </svg>
+                  <!-- SVG definitions for habit icons -->
+                  <svg style="display: none;">
+                    <defs>
+                        <g id="habit-icon-1" transform="scale(0.7)">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.29 16.29L5.7 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41L11.41 16.29c-.39.39-1.02.39-1.41 0z" fill="var(--accent-color)"></path>
+                        </g>
+                        <g id="habit-icon-2" transform="scale(0.7)">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.29 16.29L5.7 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41L11.41 16.29c-.39.39-1.02.39-1.41 0z" fill="var(--success-color)"></path>
+                        </g>
+                    </defs>
+                  </svg>
+                  <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-color-box mood"></span>心情趨勢</span>
+                    <span class="legend-item"><span class="legend-color-box habit-1"></span>運動</span>
+                    <span class="legend-item"><span class="legend-color-box habit-2"></span>閱讀</span>
+                  </div>
+            </div>
           </div>
-          <div class="mood-notes-container">
-            <textarea class="mood-notes-input" placeholder="記錄下今天的心情細節，有助於發現更深刻的洞察..." rows="3"></textarea>
-            <button class="btn btn-primary save-mood-btn">儲存心情</button>
+
+          <!-- Section 2: Habit Performance Deep Dive -->
+          <div class="analysis-section">
+             <div class="analysis-header">
+                <h3>習慣表現深度分析</h3>
+             </div>
+             <div class="stats-grid four-cols">
+                <div class="stat-card">
+                    <div class="stat-value">78%</div>
+                    <div class="stat-label">本月總完成率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12天</div>
+                    <div class="stat-label">最長連續紀錄</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">54次</div>
+                    <div class="stat-label">本月完成總數</div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-value">運動</div>
+                    <div class="stat-label">您的最佳習慣</div>
+                </div>
+             </div>
+             <div class="habit-analysis-container">
+                <div class="analysis-grid">
+                  <div class="analysis-column">
+                    <h5>🎉 習慣完成率排行榜</h5>
+                    <ul class="habit-rank-list">
+                      <li>
+                        <span class="habit-name">運動</span>
+                        <div class="progress-bar-container">
+                          <div class="progress-bar-fill success" style="width: 92%;"></div>
+                        </div>
+                        <span class="habit-percentage">92%</span>
+                      </li>
+                      <li>
+                        <span class="habit-name">冥想</span>
+                        <div class="progress-bar-container">
+                          <div class="progress-bar-fill success" style="width: 85%;"></div>
+                        </div>
+                        <span class="habit-percentage">85%</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="analysis-column">
+                    <h5>🤔 最需關注的習慣</h5>
+                    <ul class="habit-rank-list">
+                      <li>
+                        <span class="habit-name">早起</span>
+                        <div class="progress-bar-container">
+                          <div class="progress-bar-fill danger" style="width: 40%;"></div>
+                        </div>
+                        <span class="habit-percentage">40%</span>
+                      </li>
+                      <li>
+                        <span class="habit-name">喝足夠的水</span>
+                        <div class="progress-bar-container">
+                          <div class="progress-bar-fill warning" style="width: 65%;"></div>
+                        </div>
+                        <span class="habit-percentage">65%</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <!-- Section 3: Mood Analysis & Correlation Insights -->
+          <div class="analysis-section">
+            <div class="analysis-header">
+                <h3>心情分析與關聯洞察</h3>
+            </div>
+            <div class="stats-grid three-cols">
+                <div class="stat-card">
+                    <div class="stat-value">3.8 <small>/ 5.0</small></div>
+                    <div class="stat-label">本月平均心情</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">😊</div>
+                    <div class="stat-label">9/5 心情最棒</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">😔</div>
+                    <div class="stat-label">9/3 心情最低落</div>
+                </div>
+            </div>
+            <div class="correlation-insights-list">
+                <div class="insight-item">
+                    <span class="insight-icon success">💡</span>
+                    <p>當您完成**「運動」**時，您的平均心情分數為 <strong class="highlight">4.5</strong>，比未運動的日子高出 <strong class="highlight">25%</strong>。</p>
+                </div>
+                <div class="insight-item">
+                    <span class="insight-icon danger">⚠️</span>
+                    <p>我們注意到，當您**「早起」**失敗時，當天的心情分數有 <strong class="highlight">80%</strong> 的機率偏低。</p>
+                </div>
+            </div>
           </div>
         </section>
+
+        <!-- Page: 設定 (Settings) -->
+        <section id="settings-page" class="page-content hidden">
+          <header class="page-header">
+            <div>
+              <h1>設定</h1>
+              <p class="subtitle">管理你的帳號與偏好設定</p>
+            </div>
+          </header>
+          <div class="settings-container">
+             <div class="form-group">
+                <label for="username-input">使用者名稱</label>
+                <input type="text" id="username-input" class="form-input" value="MindTracker User" disabled>
+             </div>
+             <div class="form-group">
+                <label for="email-input">電子郵件</label>
+                <input type="email" id="email-input" class="form-input" value="user@example.com" disabled>
+             </div>
+             
+             <button class="btn btn-danger">登出</button>
+          </div>
+        </section>
+
       </main>
     </div>
 

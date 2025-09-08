@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const cancelBtn = document.getElementById("cancel-btn");
   const habitItems = document.querySelectorAll(".habit-item");
   const subtitle = document.getElementById("page-subtitle");
+  const navLinks = document.querySelectorAll(".nav-item a");
+  const pages = document.querySelectorAll(".page-content");
 
   // --- 功能 1: 設定今日日期 ---
   const setTodaysDate = () => {
@@ -17,7 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
       weekday: "long",
     };
     // 將語言地區設為 'zh-TW' 以顯示中文
-    subtitle.textContent = today.toLocaleDateString("zh-TW", options);
+    if (subtitle) {
+        subtitle.textContent = today.toLocaleDateString("zh-TW", options);
+    }
   };
 
   setTodaysDate();
@@ -26,11 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const openModal = () => addHabitModal.classList.add("show");
   const closeModal = () => addHabitModal.classList.remove("show");
 
-  addHabitBtn.addEventListener("click", openModal);
-  closeModalBtn.addEventListener("click", closeModal);
-  cancelBtn.addEventListener("click", closeModal);
-  // 點擊 Modal 背景也會關閉
-  addHabitModal.addEventListener("click", (event) => {
+  if(addHabitBtn) addHabitBtn.addEventListener("click", openModal);
+  if(closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+  if(cancelBtn) cancelBtn.addEventListener("click", closeModal);
+  if(addHabitModal) addHabitModal.addEventListener("click", (event) => {
     if (event.target === addHabitModal) {
       closeModal();
     }
@@ -54,4 +57,38 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  // --- 功能 4: 頁面切換 ---
+  const switchPage = (targetPageId) => {
+    // 隱藏所有頁面
+    pages.forEach(page => {
+        page.classList.add('hidden');
+    });
+
+    // 顯示目標頁面
+    const targetPage = document.getElementById(targetPageId);
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+    }
+
+    // 更新導覽列 active 狀態
+    navLinks.forEach(link => {
+        if (link.dataset.page === targetPageId) {
+            link.parentElement.classList.add('active');
+        } else {
+            link.parentElement.classList.remove('active');
+        }
+    });
+  };
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const targetPageId = link.dataset.page;
+        switchPage(targetPageId);
+    });
+  });
+
+  // 初始顯示儀表板
+  switchPage('dashboard-page');
 });
