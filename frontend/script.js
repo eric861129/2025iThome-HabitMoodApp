@@ -1,3 +1,5 @@
+import { fetchHabits } from './api.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   // --- 元素選擇 ---
   const addHabitBtn = document.getElementById("add-habit-btn");
@@ -8,6 +10,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const subtitle = document.getElementById("page-subtitle");
   const navLinks = document.querySelectorAll(".nav-item a");
   const pages = document.querySelectorAll(".page-content");
+
+  /**
+   * Fetches and logs the initial data required for the application.
+   */
+  async function loadInitialData() {
+    console.log("Attempting to load initial data...");
+    try {
+      const habits = await fetchHabits();
+
+      if (habits) {
+        console.log("✅ Habits loaded successfully:", habits);
+      } else {
+        console.error("❌ Failed to load habits.");
+      }
+    } catch (error) {
+      console.error(
+        "An unexpected error occurred during initial data load:",
+        error
+      );
+    }
+  }
 
   // --- 功能 1: 設定今日日期 ---
   const setTodaysDate = () => {
@@ -20,24 +43,23 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     // 將語言地區設為 'zh-TW' 以顯示中文
     if (subtitle) {
-        subtitle.textContent = today.toLocaleDateString("zh-TW", options);
+      subtitle.textContent = today.toLocaleDateString("zh-TW", options);
     }
   };
-
-  setTodaysDate();
 
   // --- 功能 2: Modal 視窗開關 ---
   const openModal = () => addHabitModal.classList.add("show");
   const closeModal = () => addHabitModal.classList.remove("show");
 
-  if(addHabitBtn) addHabitBtn.addEventListener("click", openModal);
-  if(closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
-  if(cancelBtn) cancelBtn.addEventListener("click", closeModal);
-  if(addHabitModal) addHabitModal.addEventListener("click", (event) => {
-    if (event.target === addHabitModal) {
-      closeModal();
-    }
-  });
+  if (addHabitBtn) addHabitBtn.addEventListener("click", openModal);
+  if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+  if (addHabitModal)
+    addHabitModal.addEventListener("click", (event) => {
+      if (event.target === addHabitModal) {
+        closeModal();
+      }
+    });
 
   // --- 功能 3: 習慣打卡 ---
   habitItems.forEach((item) => {
@@ -61,34 +83,40 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 功能 4: 頁面切換 ---
   const switchPage = (targetPageId) => {
     // 隱藏所有頁面
-    pages.forEach(page => {
-        page.classList.add('hidden');
+    pages.forEach((page) => {
+      page.classList.add("hidden");
     });
 
     // 顯示目標頁面
     const targetPage = document.getElementById(targetPageId);
     if (targetPage) {
-        targetPage.classList.remove('hidden');
+      targetPage.classList.remove("hidden");
     }
 
     // 更新導覽列 active 狀態
-    navLinks.forEach(link => {
-        if (link.dataset.page === targetPageId) {
-            link.parentElement.classList.add('active');
-        } else {
-            link.parentElement.classList.remove('active');
-        }
+    navLinks.forEach((link) => {
+      if (link.dataset.page === targetPageId) {
+        link.parentElement.classList.add("active");
+      } else {
+        link.parentElement.classList.remove("active");
+      }
     });
   };
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', (event) => {
-        event.preventDefault();
-        const targetPageId = link.dataset.page;
-        switchPage(targetPageId);
+  navLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      const targetPageId = link.dataset.page;
+      switchPage(targetPageId);
     });
   });
 
-  // 初始顯示儀表板
-  switchPage('dashboard-page');
+  // --- App Initialization ---
+  const initialize = () => {
+    setTodaysDate();
+    switchPage("dashboard-page");
+    loadInitialData(); // 載入初始數據
+  };
+
+  initialize();
 });
