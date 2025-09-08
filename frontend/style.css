@@ -94,21 +94,23 @@ p.subtitle {
 /* --- 元件 (Components) --- */
 
 /* Sidebar Navigation */
-.logo {
+.logo-container {
   display: flex;
   align-items: center;
-  gap: var(--spacing-s);
+  gap: var(--spacing-m);
   margin-bottom: var(--spacing-xxl);
+  padding: 0 var(--spacing-m);
 }
 
-.logo-icon {
+.logo-img {
   width: 32px;
   height: 32px;
-  color: var(--primary-color);
 }
 
-.logo h2 {
+.logo-text {
+  font-family: var(--font-heading);
   font-size: 1.5rem;
+  font-weight: 700;
   color: var(--neutral-text);
 }
 
@@ -123,7 +125,7 @@ p.subtitle {
   display: flex;
   align-items: center;
   gap: var(--spacing-m);
-  padding: var(--spacing-s) var(--spacing-m);
+  padding: var(--spacing-m);
   border-radius: 8px;
   text-decoration: none;
   color: var(--neutral-text);
@@ -140,9 +142,82 @@ p.subtitle {
   color: var(--color-white);
 }
 
-.nav-item svg {
-  width: 20px;
-  height: 20px;
+.nav-item .nav-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* --- Mood Tracker --- */
+.mood-tracker-container {
+  margin-top: var(--spacing-xxl);
+  background-color: var(--color-white);
+  border-radius: 12px;
+  padding: var(--spacing-l);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.mood-tracker-container h3 {
+  margin-bottom: var(--spacing-l);
+}
+
+.mood-selector {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-m);
+}
+
+.mood-option {
+  font-size: 2rem;
+  padding: var(--spacing-s);
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background-color: var(--neutral-background);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 60px;
+  height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mood-option:hover {
+  transform: scale(1.1);
+}
+
+.mood-option:focus,
+.mood-option.active {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-color);
+}
+
+.mood-notes-container {
+    margin-top: var(--spacing-l);
+    text-align: right;
+}
+
+.mood-notes-input {
+    width: 100%;
+    padding: var(--spacing-s) var(--spacing-m);
+    border: 1px solid var(--neutral-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+    margin-bottom: var(--spacing-m);
+}
+
+.mood-notes-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.save-mood-btn {
+    /* The button already has styles from .btn and .btn-primary */
 }
 
 /* Page Header */
@@ -342,4 +417,66 @@ p.subtitle {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-m);
+}
+
+/* --- 響應式設計 (Responsive Web Design) --- */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar-nav {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--neutral-border);
+    padding: var(--spacing-m);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-container {
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    gap: var(--spacing-m);
+  }
+
+  .nav-item a {
+    padding: var(--spacing-s);
+  }
+
+  /* Hide text on mobile nav, show only icons */
+  .nav-item span {
+    display: none;
+  }
+
+  .main-content {
+    padding: var(--spacing-l);
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-m);
+  }
+
+  .mood-selector {
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
 }

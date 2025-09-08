@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>心境軌跡 (MindTrack) - 習慣追蹤器</title>
+    <title>MindTrack - 你的個人成長夥伴</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,77 +16,28 @@
     <div class="app-layout">
       <!-- 側邊導覽列 (Side Navigation) -->
       <aside class="sidebar-nav">
-        <div class="logo">
-          <svg
-            class="logo-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"
-            />
-          </svg>
-          <h2>MindTrack</h2>
+        <div class="logo-container">
+          <img src="./assets/logo.png" alt="MindTrack Logo" class="logo-img" />
+          <span class="logo-text">MindTrack</span>
         </div>
         <nav>
-          <ul class="nav-list">
+          <ul class="nav-list" aria-label="主要導覽">
             <li class="nav-item active">
               <a href="#">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                習慣追蹤
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M4 13h6v8H4v-8zm0-10h6v8H4V3zm10 6h6v8h-6V9zm0-6h6v4h-6V3z"></path></svg>
+                <span>儀表板</span>
               </a>
             </li>
             <li class="nav-item">
               <a href="#">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"
-                  />
-                </svg>
-                洞察報告
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v5h-2V7zm0 6h2v2h-2v-2z"></path></svg>
+                <span>回顧</span>
               </a>
             </li>
             <li class="nav-item">
               <a href="#">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-                  />
-                </svg>
-                設定
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
+                <span>設定</span>
               </a>
             </li>
           </ul>
@@ -169,7 +120,7 @@
             <span class="habit-name">閱讀 15 頁書</span>
           </div>
           <div
-            class="habit-item"
+            class="habit-item completed"
             tabindex="0"
             role="button"
             aria-pressed="true"
@@ -190,6 +141,22 @@
               </svg>
             </div>
             <span class="habit-name">冥想 10 分鐘</span>
+          </div>
+        </section>
+
+        <!-- 心情記錄區 (Mood Tracker) -->
+        <section class="mood-tracker-container">
+          <h3>今天感覺如何？</h3>
+          <div class="mood-selector">
+            <button class="mood-option" aria-label="開心">😊</button>
+            <button class="mood-option" aria-label="愉快">😄</button>
+            <button class="mood-option" aria-label="還好">🙂</button>
+            <button class="mood-option" aria-label="難過">😔</button>
+            <button class="mood-option" aria-label="生氣">😠</button>
+          </div>
+          <div class="mood-notes-container">
+            <textarea class="mood-notes-input" placeholder="記錄下今天的心情細節，有助於發現更深刻的洞察..." rows="3"></textarea>
+            <button class="btn btn-primary save-mood-btn">儲存心情</button>
           </div>
         </section>
       </main>
