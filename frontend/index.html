@@ -10,6 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Lato:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -72,6 +74,24 @@
                     </header>
                     <div class="habit-list-container"></div>
                     <div class="mood-tracker-container"></div>
+
+          <!-- Insight Chart Container -->
+          <section class="chart-container">
+            <h2>關聯性洞察</h2>
+            <canvas id="insightChart" role="img" aria-label="心情趨勢與習慣完成關聯圖表">
+              <p>您的瀏覽器不支援圖表顯示，此處為心情與習慣的關聯性數據圖表。</p>
+            </canvas>
+          </section>
+          <!-- End Insight Chart Container -->
+
+          <!-- Insight Chart Container -->
+          <section class="chart-container">
+            <h2>關聯性洞察</h2>
+            <canvas id="insightChart" role="img" aria-label="心情趨勢與習慣完成關聯圖表">
+              <p>您的瀏覽器不支援圖表顯示，此處為心情與習慣的關聯性數據圖表。</p>
+            </canvas>
+          </section>
+          <!-- End Insight Chart Container -->
                 </section>
 
                 <!-- Page: 回顧 (Review) -->
@@ -106,5 +126,5 @@
         </div>
     </template>
 
-    <script src="script.js" type="module" defer></script>
+    <script src="js/main.js" type="module" defer></script>
 </body>

@@ -98,6 +98,14 @@ export async function fetchHabits() {
 }
 
 /**
+ * 獲取所有習慣日誌的列表。
+ * @returns {Promise<Array<Object>|null>} 一個解析為習慣日誌物件陣列的 Promise，失敗時為 null。
+ */
+export async function fetchHabitLogs() {
+  return apiFetch('/habit_logs');
+}
+
+/**
  * 在後端新增一個新習慣。(建立)
  * @param {object} habitData - 新習慣的數據 (例如 { name: '讀一本書' })。
  * @returns {Promise<Object|null>} 一個解析為新建立的習慣物件的 Promise，失敗時為 null。
