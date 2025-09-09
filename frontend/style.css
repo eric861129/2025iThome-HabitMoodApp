@@ -6,6 +6,7 @@
   --accent-color: #f5a623;
   --success-color: #7ed321;
   --danger-color: #d0021b;
+  --danger-color-light: #fff2f2;
   --neutral-text: #333333;
   --neutral-subtle: #9b9b9b;
   --neutral-border: #eaeaea;
@@ -249,7 +250,7 @@ p.subtitle {
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-s);
@@ -260,7 +261,7 @@ p.subtitle {
   color: var(--color-white);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background-color: var(--primary-color-hover);
 }
 
@@ -275,6 +276,10 @@ p.subtitle {
   border-radius: 12px;
   padding: var(--spacing-l);
   box-shadow: 0 4px 12px var(--shadow-color);
+  min-height: 150px; /* Ensure container has height for spinner/messages */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .habit-item {
@@ -283,7 +288,6 @@ p.subtitle {
   gap: var(--spacing-m);
   padding: var(--spacing-m);
   border-radius: 8px;
-  cursor: pointer;
   transition: background-color 0.2s;
   user-select: none;
 }
@@ -317,6 +321,7 @@ p.subtitle {
   justify-content: center;
   transition: border-color 0.3s, background-color 0.3s;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .habit-checkbox svg {
@@ -430,11 +435,6 @@ p.subtitle {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-}
-
-.form-input:disabled {
-  background-color: rgba(234, 234, 234, 0.5);
-  cursor: not-allowed;
 }
 
 .modal-actions {
@@ -900,4 +900,62 @@ p.subtitle {
   .analysis-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* --- UI 狀態反饋樣式 (UI State Feedback Styles) --- */
+
+/* 1. 禁用狀態 */
+.btn:disabled,
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 2. 載入中指示器 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--neutral-border);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: var(--spacing-xl) auto;
+}
+
+/* 3. 錯誤訊息面板 */
+.error-message {
+  background-color: var(--danger-color-light);
+  border: 1px solid var(--danger-color);
+  color: var(--danger-color);
+  padding: var(--spacing-l);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.error-message p {
+  margin: 0 0 var(--spacing-m) 0;
+  color: var(--danger-color);
+  font-weight: 700;
+}
+
+.retry-button {
+  padding: var(--spacing-s) var(--spacing-l);
+  border-radius: 8px;
+  border: 1px solid var(--danger-color);
+  background-color: var(--color-white);
+  color: var(--danger-color);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.retry-button:hover {
+  background-color: var(--danger-color);
+  color: var(--color-white);
 }

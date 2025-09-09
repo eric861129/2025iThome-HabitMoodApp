@@ -1,271 +1,339 @@
-
 import {
+  // Auth
+  login as apiLogin,
+  register as apiRegister,
+  fetchUserProfile,
+  // Habits
   fetchHabits,
   addHabit,
   deleteHabit,
   updateHabit,
+  // Moods
+  fetchMoodLogForDate,
+  logMood,
 } from "./api.js";
 
 // --- 1. 狀態中心 (單一真理之源) ---
 const state = {
+  // App data
   habits: [],
-  isLoading: true,
+  todayMoodLog: null,
+  // App status
+  isLoading: {
+    auth: true, // Start with auth check
+    main: false,
+    mood: false,
+  },
   error: null,
-  isSubmitting: false, // 用於追蹤「新增/編輯」時的提交狀態
-  editingHabitId: null, // 追蹤當前正在被編輯的習慣 ID
+  // Session & UI data
+  isAuthenticated: false,
+  user: null,
+  currentView: 'loading', // loading, auth, main
+  authView: 'login', // login, register
 };
 
-// --- 2. 元素選擇器 ---
-const habitListContainer = document.querySelector(".habit-list-container");
-const addHabitModal = document.getElementById("add-habit-modal");
-const addHabitForm = addHabitModal.querySelector("form"); // Assuming the modal contains a form
-const habitNameInput = document.getElementById("habit-name-input");
-const saveHabitBtn = addHabitModal.querySelector(".btn-primary");
+// --- 2. 元素選擇器 (動態) ---
+const appRoot = document.getElementById('app-root');
+const mainAppTemplate = document.getElementById('main-app-template');
+const authTemplate = document.getElementById('auth-template');
 
 // --- 3. 渲染引擎 ---
 
-/**
- * 根據 state 渲染「新增習慣 Modal」的狀態
- */
-function renderModal() {
-  if (saveHabitBtn) {
-    saveHabitBtn.disabled = state.isSubmitting;
-    saveHabitBtn.textContent = state.isSubmitting ? "儲存中..." : "儲存";
-  }
-}
+function renderHabitList(container) {
+  if (!container) return;
+  const { habits, isLoading, error } = state;
 
-/**
- * 根據中央 `state` 物件渲染習慣列表。
- */
-function renderHabitList() {
-  habitListContainer.innerHTML = "";
-
-  if (state.isLoading) {
-    habitListContainer.innerHTML = "<p>正在載入您的習慣...</p>";
+  if (isLoading.main && habits.length === 0) {
+    container.innerHTML = `<div class="loading-spinner"></div>`;
     return;
   }
-  if (state.error) {
-    habitListContainer.innerHTML = `<p class="error-message">${state.error}</p>`;
+  if (error) {
+    container.innerHTML = `
+      <div class="error-message">
+        <p>${error.message}</p>
+        <button class="retry-button" data-action="retry-main-data">重試</button>
+      </div>`;
     return;
   }
-  if (state.habits.length === 0) {
-    habitListContainer.innerHTML =
-      "<p>您尚未新增任何習慣。點擊「新增習慣」開始吧！</p>";
+  if (habits.length === 0) {
+    container.innerHTML = "<p>您尚未新增任何習慣。點擊「新增習慣」開始吧！</p>";
     return;
   }
 
-  const habitElements = state.habits
+  container.innerHTML = habits
     .map((habit) => {
-      const isEditing = habit.id === state.editingHabitId;
-      // TODO: The completion status should be managed in state as well.
-      const isCompleted = false;
-
-      if (isEditing) {
-        return `
-          <div class="habit-item editing">
-            <input type="text" value="${habit.name}" class="edit-input" data-habit-id="${habit.id}" />
-            <button class="btn" data-action="save-edit" data-habit-id="${habit.id}">儲存</button>
-          </div>
-        `;
-      }
-
+      const isCompleted = habit.completed_today || false;
       return `
         <div class="habit-item ${isCompleted ? "completed" : ""}" data-habit-id="${habit.id}">
-          <div class="habit-interaction-area" data-action="toggle" role="button" tabindex="0">
-            <div class="habit-checkbox">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-              </svg>
-            </div>
-            <span class="habit-name">${habit.name}</span>
+          <div class="habit-interaction-area" data-action="toggle-habit" role="button" tabindex="0">
+              <div class="habit-checkbox"></div>
+              <span class="habit-name">${habit.name}</span>
           </div>
           <div class="habit-actions">
-            <button class="action-btn" data-action="edit" aria-label="編輯習慣">✏️</button>
-            <button class="action-btn" data-action="delete" aria-label="刪除習慣">🗑️</button>
+              <button class="action-btn" data-action="delete-habit" aria-label="刪除習慣">🗑️</button>
           </div>
         </div>
       `;
     })
     .join("");
-
-  habitListContainer.innerHTML = habitElements;
 }
 
-/**
- * 主渲染函式，負責調度所有渲染任務。
- */
+function renderMoodTracker(container) {
+    if (!container) return;
+    const rating = state.todayMoodLog?.rating || 0;
+    const moodSelector = container.querySelector(".mood-selector");
+    const moodNotesInput = container.querySelector(".mood-notes-input");
+    const saveMoodBtn = container.querySelector(".save-mood-btn");
+
+    moodSelector.querySelectorAll(".mood-option").forEach(btn => {
+        btn.classList.toggle("active", Number(btn.dataset.rating) === rating);
+    });
+    moodNotesInput.value = state.todayMoodLog?.notes || '';
+    saveMoodBtn.disabled = state.isLoading.mood;
+    saveMoodBtn.textContent = state.isLoading.mood ? '儲存中...' : '儲存心情';
+}
+
+function renderAuthView(container) {
+    const isLoading = state.isLoading.auth;
+    if (state.authView === 'login') {
+        container.innerHTML = `
+            <div class="auth-card">
+                <div class="logo-container"><h2>MindTrack</h2></div>
+                <div id="auth-content">
+                    <form id="login-form">
+                        <h3>登入</h3>
+                        <div class="form-group">
+                            <label for="login-email">電子郵件</label>
+                            <input type="email" id="login-email" class="form-input" required ${isLoading ? 'disabled' : ''}>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">密碼</label>
+                            <input type="password" id="login-password" class="form-input" required ${isLoading ? 'disabled' : ''}>
+                        </div>
+                        <div class="auth-error" id="auth-error"></div>
+                        <button type="submit" class="btn btn-primary" id="login-btn" ${isLoading ? 'disabled' : ''}>${isLoading ? '登入中...' : '登入'}</button>
+                    </form>
+                </div>
+                <div class="auth-form-footer">
+                    <p>還沒有帳號？ <a href="#" data-action="show-register">點此註冊</a></p>
+                </div>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="auth-card">
+                <div class="logo-container"><h2>MindTrack</h2></div>
+                <div id="auth-content">
+                    <form id="register-form">
+                        <h3>建立新帳號</h3>
+                        <div class="form-group">
+                            <label for="register-username">使用者名稱</label>
+                            <input type="text" id="register-username" class="form-input" required ${isLoading ? 'disabled' : ''}>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">電子郵件</label>
+                            <input type="email" id="register-email" class="form-input" required ${isLoading ? 'disabled' : ''}>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">密碼</label>
+                            <input type="password" id="register-password" class="form-input" required ${isLoading ? 'disabled' : ''}>
+                        </div>
+                        <div class="auth-error" id="auth-error"></div>
+                        <button type="submit" class="btn btn-primary" id="register-btn" ${isLoading ? 'disabled' : ''}>${isLoading ? '註冊中...' : '註冊'}</button>
+                    </form>
+                </div>
+                <div class="auth-form-footer">
+                    <p>已經有帳號了？ <a href="#" data-action="show-login">點此登入</a></p>
+                </div>
+            </div>
+        `;
+    }
+}
+
 function render() {
-  renderModal();
-  renderHabitList();
+  appRoot.innerHTML = '';
+  const anyLoading = Object.values(state.isLoading).some(Boolean);
+
+  switch (state.currentView) {
+    case 'loading':
+      appRoot.innerHTML = '<div class="loading-spinner"></div>';
+      break;
+    case 'auth':
+      const authNode = authTemplate.content.cloneNode(true);
+      renderAuthView(authNode.querySelector('.auth-layout'));
+      appRoot.appendChild(authNode);
+      break;
+    case 'main':
+      const mainNode = mainAppTemplate.content.cloneNode(true);
+      mainNode.querySelector('#add-habit-btn').disabled = anyLoading;
+      renderHabitList(mainNode.querySelector('.habit-list-container'));
+      renderMoodTracker(mainNode.querySelector('.mood-tracker-container'));
+      appRoot.appendChild(mainNode);
+      break;
+  }
 }
 
 // --- 4. 狀態更新器 ---
-
 function setState(newState) {
   Object.assign(state, newState);
+  if (newState.isLoading) {
+    state.isLoading = { ...state.isLoading, ...newState.isLoading };
+  }
+  if (newState.authToken !== undefined) {
+    newState.authToken
+      ? localStorage.setItem('authToken', newState.authToken)
+      : localStorage.removeItem('authToken');
+  }
   render();
 }
 
-// --- 5. 應用程式邏輯與事件處理 ---
+// --- 5. 應用程式邏輯 ---
 
-/**
- * 處理新增習慣表單的提交。
- * @param {Event} event
- */
-async function handleAddHabitSubmit(event) {
-  event.preventDefault();
-  const habitName = habitNameInput.value.trim();
+function getTodayDateString() {
+  return new Date().toISOString().split('T')[0];
+}
 
-  if (!habitName) {
-    alert("習慣名稱不能為空！");
+async function loadMainAppData() {
+  setState({ isLoading: { main: true }, error: null });
+  try {
+    const [habits, moodLog] = await Promise.all([
+      fetchHabits(),
+      fetchMoodLogForDate(getTodayDateString()),
+    ]);
+    if (habits === null) throw new Error("讀取習慣資料時發生錯誤。");
+
+    setState({ habits, todayMoodLog: moodLog, isLoading: { main: false } });
+  } catch (error) {
+    setState({ error: { message: error.message }, isLoading: { main: false } });
+  }
+}
+
+async function initializeApp() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    setState({ currentView: 'auth', isLoading: { auth: false } });
     return;
   }
 
-  setState({ isSubmitting: true });
+  setState({ isLoading: { auth: true } });
+  const userProfile = await fetchUserProfile();
 
-  const newHabit = await addHabit({ name: habitName });
-
-  if (newHabit) {
-    const updatedHabits = [newHabit, ...state.habits];
-    setState({ habits: updatedHabits, isSubmitting: false });
-    closeModal();
-    habitNameInput.value = "";
+  if (userProfile) {
+    setState({ isAuthenticated: true, user: userProfile, currentView: 'main', isLoading: { auth: false } });
+    await loadMainAppData();
   } else {
-    alert("新增習慣失敗，請稍後再試。");
-    setState({ isSubmitting: false });
+    setState({ authToken: null, isAuthenticated: false, user: null, currentView: 'auth', isLoading: { auth: false } });
   }
 }
 
-/**
- * 使用事件委派處理習慣列表中的所有點擊事件。
- * @param {Event} event
- */
-async function handleHabitListClick(event) {
-  const target = event.target;
-  const actionTarget = target.closest("[data-action]");
+// --- 6. 事件處理 (集中委派) ---
 
-  if (!actionTarget) return;
+async function handleMainAppClick(event) {
+    const action = event.target.closest("[data-action]")?.dataset.action;
+    if (!action) return;
 
-  const action = actionTarget.dataset.action;
-  const habitItem = actionTarget.closest(".habit-item, .editing");
-  const habitId = habitItem?.dataset.habitId;
-
-  if (!habitId) return;
-
-  switch (action) {
-    case "delete": {
-      if (!confirm("確定要刪除這個習慣嗎？")) return;
-
-      const originalHabits = [...state.habits];
-      const optimisticHabits = state.habits.filter((h) => h.id !== Number(habitId));
-      setState({ habits: optimisticHabits });
-
-      const success = await deleteHabit(habitId);
-      if (!success) {
-        alert("刪除失敗，正在還原...");
-        setState({ habits: originalHabits });
-      }
-      break;
+    switch (action) {
+        case "retry-main-data":
+            loadMainAppData();
+            break;
+        case "logout":
+            setState({ authToken: null, isAuthenticated: false, user: null, habits: [], currentView: 'auth' });
+            break;
+        case "delete-habit": {
+            const habitId = Number(event.target.closest(".habit-item")?.dataset.habitId);
+            if (!habitId || !confirm("確定要刪除這個習慣嗎？")) return;
+            setState({ isLoading: { main: true } });
+            const success = await deleteHabit(habitId);
+            if (success) {
+                await loadMainAppData();
+            } else {
+                setState({ error: { message: "刪除習慣失敗。" }, isLoading: { main: false } });
+            }
+            break;
+        }
+        case "toggle-habit": {
+            const habitId = Number(event.target.closest(".habit-item")?.dataset.habitId);
+            if (!habitId) return;
+            const originalHabits = JSON.parse(JSON.stringify(state.habits));
+            const updatedHabits = state.habits.map((h) =>
+                h.id === habitId ? { ...h, completed_today: !h.completed_today } : h
+            );
+            setState({ habits: updatedHabits });
+            const habitToUpdate = updatedHabits.find((h) => h.id === habitId);
+            const success = await updateHabit(habitId, { completed_today: habitToUpdate.completed_today });
+            if (!success) {
+                alert("同步完成狀態失敗，正在還原。");
+                setState({ habits: originalHabits });
+            }
+            break;
+        }
     }
-
-    case "toggle": {
-      // TODO: Implement optimistic update and background sync for toggling completion.
-      // 1. Find habit in state.
-      // 2. Toggle its 'completed_today' property.
-      // 3. Call setState to instantly update UI.
-      // 4. Call `updateHabit` in the background.
-      // 5. If API call fails, revert the state change and alert the user.
-      console.log(`Toggle habit ${habitId}`);
-      break;
-    }
-      
-    case "edit": {
-      setState({ editingHabitId: Number(habitId) });
-      // Focus the input after it's rendered
-      setTimeout(() => {
-        const input = habitListContainer.querySelector(`.edit-input[data-habit-id="${habitId}"]`);
-        input?.focus();
-      }, 0);
-      break;
-    }
-
-    case "save-edit": {
-      const input = habitItem.querySelector("input");
-      const newName = input.value.trim();
-      const originalHabit = state.habits.find(h => h.id === Number(habitId));
-
-      if (!newName || newName === originalHabit.name) {
-        setState({ editingHabitId: null });
-        return;
-      }
-      
-      const updatedHabit = await updateHabit(habitId, { name: newName });
-
-      if (updatedHabit) {
-        const updatedHabits = state.habits.map(h => h.id === Number(habitId) ? updatedHabit : h);
-        setState({ habits: updatedHabits, editingHabitId: null });
-      } else {
-        alert("更新失敗！");
-        setState({ editingHabitId: null });
-      }
-      break;
-    }
-  }
 }
 
+async function handleAuthClick(event) {
+    const action = event.target.closest("[data-action]")?.dataset.action;
+    if (!action) return;
 
-// --- 6. DOMContentLoaded 初始化 ---
+    if (action === 'show-register') {
+        setState({ authView: 'register', error: null });
+    }
+    if (action === 'show-login') {
+        setState({ authView: 'login', error: null });
+    }
+}
 
+async function handleLoginSubmit(event) {
+    event.preventDefault();
+    const email = appRoot.querySelector('#login-email').value;
+    const password = appRoot.querySelector('#login-password').value;
+    const errorDiv = appRoot.querySelector('#auth-error');
+    
+    setState({ isLoading: { auth: true } });
+    errorDiv.textContent = '';
+
+    const result = await apiLogin({ email, password });
+
+    if (result && result.token) {
+        setState({ authToken: result.token });
+        await initializeApp();
+    } else {
+        errorDiv.textContent = '登入失敗，請檢查您的帳號或密碼。';
+        setState({ isLoading: { auth: false } });
+    }
+}
+
+async function handleRegisterSubmit(event) {
+    event.preventDefault();
+    const username = appRoot.querySelector('#register-username').value;
+    const email = appRoot.querySelector('#register-email').value;
+    const password = appRoot.querySelector('#register-password').value;
+    const errorDiv = appRoot.querySelector('#auth-error');
+
+    setState({ isLoading: { auth: true } });
+    errorDiv.textContent = '';
+
+    const result = await apiRegister({ username, email, password });
+
+    if (result && result.id) {
+        alert('註冊成功！請使用您的新帳號登入。');
+        setState({ authView: 'login', isLoading: { auth: false } });
+    } else {
+        errorDiv.textContent = '註冊失敗，請檢查您輸入的資訊。';
+        setState({ isLoading: { auth: false } });
+    }
+}
+
+// --- 7. 初始化 ---
 document.addEventListener("DOMContentLoaded", () => {
-  async function loadInitialData() {
-    setState({ isLoading: true, error: null });
-    try {
-      const data = await fetchHabits();
-      if (data) {
-        setState({ habits: data, isLoading: false });
-      } else {
-        setState({ error: "讀取習慣失敗。", isLoading: false });
-      }
-    } catch (error) {
-      console.error("在初始數據載入期間發生未預期的錯誤:", error);
-      setState({ error: "發生未預期的錯誤。", isLoading: false });
-    }
-  }
+  appRoot.addEventListener('click', event => {
+    if (state.currentView === 'main') handleMainAppClick(event);
+    if (state.currentView === 'auth') handleAuthClick(event);
+  });
 
-  // --- 保留的非狀態驅動邏輯 ---
-  const addHabitBtn = document.getElementById("add-habit-btn");
-  const closeModalBtn = document.getElementById("close-modal-btn");
-  const cancelBtn = document.getElementById("cancel-btn");
-  const subtitle = document.getElementById("page-subtitle");
+  appRoot.addEventListener('submit', event => {
+    if (event.target.id === 'login-form') handleLoginSubmit(event);
+    if (event.target.id === 'register-form') handleRegisterSubmit(event);
+  });
 
-  const setTodaysDate = () => {
-    const today = new Date();
-    const options = { year: "numeric", month: "long", day: "numeric", weekday: "long" };
-    if (subtitle) {
-      subtitle.textContent = today.toLocaleDateString("zh-TW", options);
-    }
-  };
-
-  const openModal = () => addHabitModal.classList.add("show");
-  const closeModal = () => {
-      addHabitModal.classList.remove("show");
-      habitNameInput.value = ""; // Clear input on close
-  }
-
-  // --- 事件監聽器綁定 ---
-  if (addHabitBtn) addHabitBtn.addEventListener("click", openModal);
-  if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
-  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
-  if (addHabitModal) {
-    addHabitModal.addEventListener("click", (event) => {
-      if (event.target === addHabitModal) closeModal();
-    });
-  }
-  if (addHabitForm) addHabitForm.addEventListener("submit", handleAddHabitSubmit);
-  if (habitListContainer) habitListContainer.addEventListener("click", handleHabitListClick);
-
-
-  // --- 應用程式初始化 ---
-  setTodaysDate();
-  loadInitialData();
+  initializeApp();
 });

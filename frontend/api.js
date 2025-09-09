@@ -17,46 +17,80 @@ const BASE_URL = 'http://127.0.0.1:5000';
  * @returns {Promise<any|null>} 成功時返回解析後的 JSON 回應，對於 204 回應返回成功標識，失敗時返回 null。
  */
 async function apiFetch(path, { method = 'GET', body = null } = {}) {
+  const token = localStorage.getItem('authToken');
+  const headers = new Headers();
+
+  if (token) {
+    headers.append('Authorization', `Bearer ${token}`);
+  }
+
+  if (body) {
+    headers.append('Content-Type', 'application/json');
+  }
+
   const options = {
     method,
-    headers: {},
+    headers,
+    body: body ? JSON.stringify(body) : null,
   };
-
-  // 如果提供了 body，將其字串化並設定 Content-Type 標頭。
-  if (body) {
-    options.body = JSON.stringify(body);
-    options.headers['Content-Type'] = 'application/json';
-  }
 
   try {
     const response = await fetch(`${BASE_URL}${path}`, options);
 
-    // 檢查 HTTP 回應狀態是否不為 OK。
     if (!response.ok) {
-      // 嘗試從回應主體中解析錯誤細節。
       const errorBody = await response.json().catch(() => null);
       const errorMessage = errorBody?.message || `網路回應不正常。狀態: ${response.status}`;
       throw new Error(errorMessage);
     }
 
-    // 對於 204 No Content 回應 (常見於 DELETE/PUT)，返回一個成功標識。
     if (response.status === 204) {
       return { success: true };
     }
 
-    // 對於所有其他成功的響應，解析並返回 JSON 主體。
     return await response.json();
   } catch (error) {
     console.error(`API 請求錯誤 (${method} ${path}):`, error.message);
-    // 向呼叫者返回 null 以表示失敗。
     return null;
   }
 }
 
-// --- 公開的 API 函式 ---
+// --- Auth API ---
 
 /**
- * 從後端獲取所有習慣的列表。(讀取)
+ * 使用者登入
+ * @param {object} credentials - 使用者憑證
+ * @param {string} credentials.email - 電子郵件
+ * @param {string} credentials.password - 密碼
+ * @returns {Promise<{token: string}|null>} 成功時返回包含 token 的物件，失敗時返回 null
+ */
+export async function login(credentials) {
+  return apiFetch('/auth/login', { method: 'POST', body: credentials });
+}
+
+/**
+ * 註冊新使用者
+ * @param {object} userData - 使用者資料
+ * @param {string} userData.username - 使用者名稱
+ * @param {string} userData.email - 電子郵件
+ * @param {string} userData.password - 密碼
+ * @returns {Promise<Object|null>} 成功時返回使用者物件，失敗時返回 null
+ */
+export async function register(userData) {
+  return apiFetch('/auth/register', { method: 'POST', body: userData });
+}
+
+/**
+ * 獲取當前登入使用者的個人資料
+ * @returns {Promise<Object|null>} 成功時返回使用者物件，失敗時返回 null
+ */
+export async function fetchUserProfile() {
+    return apiFetch('/users/me');
+}
+
+// --- Habits API ---
+
+/**
+ * 獲取所有習慣的列表。(讀取)
  * @returns {Promise<Array<Object>|null>} 一個解析為習慣物件陣列的 Promise，失敗時為 null。
  */
 export async function fetchHabits() {
@@ -69,10 +103,7 @@ export async function fetchHabits() {
  * @returns {Promise<Object|null>} 一個解析為新建立的習慣物件的 Promise，失敗時為 null。
  */
 export async function addHabit(habitData) {
-  return apiFetch('/habits', {
-    method: 'POST',
-    body: habitData,
-  });
+  return apiFetch('/habits', { method: 'POST', body: habitData });
 }
 
 /**
@@ -82,10 +113,7 @@ export async function addHabit(habitData) {
  * @returns {Promise<Object|null>} 一個解析為更新後的習慣物件的 Promise，失敗時為 null。
  */
 export async function updateHabit(habitId, updateData) {
-  return apiFetch(`/habits/${habitId}`, {
-    method: 'PUT',
-    body: updateData,
-  });
+  return apiFetch(`/habits/${habitId}`, { method: 'PUT', body: updateData });
 }
 
 /**
@@ -95,7 +123,28 @@ export async function updateHabit(habitId, updateData) {
  */
 export async function deleteHabit(habitId) {
   const result = await apiFetch(`/habits/${habitId}`, { method: 'DELETE' });
-  // apiFetch 對於 204 回應返回 { success: true }，對於錯誤返回 null。
-  // 將結果強制轉換為布林值，以提供清晰的成功/失敗信號。
   return !!result;
+}
+
+// --- Moods API ---
+
+/**
+ * 獲取指定日期的心情日誌。
+ * @param {string} date - 日期字串，格式為 'YYYY-MM-DD'。
+ * @returns {Promise<Object|null>} 一個解析為心情日誌物件的 Promise，如果當天沒有紀錄則可能為 null。
+ */
+export async function fetchMoodLogForDate(date) {
+    return apiFetch(`/moods?date=${date}`);
+}
+
+/**
+ * 建立或更新一筆心情日誌。
+ * @param {object} moodData - 心情數據
+ * @param {number} moodData.rating - 心情評分 (1-5)
+ * @param {string} moodData.notes - 心情備註
+ * @param {string} moodData.log_date - 日期字串，格式為 'YYYY-MM-DD'
+ * @returns {Promise<Object|null>} 一個解析為已儲存的心情日誌物件的 Promise，失敗時為 null。
+ */
+export async function logMood(moodData) {
+    return apiFetch('/moods', { method: 'POST', body: moodData });
 }
