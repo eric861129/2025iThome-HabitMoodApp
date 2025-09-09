@@ -60,7 +60,7 @@
 
 ### 3.1. 使用者登入流程
 
-```mermaid
+````mermaid
 graph TD
     A[使用者輸入憑證] --> B{點擊登入};
     B --> C{前端表單驗證}; 
@@ -72,11 +72,11 @@ graph TD
     H --> I[UI: 導向主應用/儀表板];
     F -- 失敗 (401/403/500) --> J{更新狀態: authStatus='error', error='錯誤訊息'}; 
     J --> K[UI: 顯示錯誤訊息/啟用按鈕];
-```
+````
 
 ### 3.2. 使用者登出流程
 
-```mermaid
+````mermaid
 graph TD
     A[使用者點擊登出] --> B{更新狀態: authStatus='loading'};
     B --> C[UI: 禁用所有互動/顯示載入];
@@ -85,11 +85,11 @@ graph TD
     E --> F[更新狀態: authStatus='unauthenticated', error=null];
     F --> G[UI: 導向登入頁面];
     G -- (可選) 發送 API 請求 --> H[後端清除 Session/Token];
-```
+````
 
 ### 3.3. 應用程式啟動時的認證檢查流程
 
-```mermaid
+````mermaid
 graph TD
     A[應用程式啟動] --> B{檢查 localStorage 是否有 Token?};
     B -- 無 Token --> C{更新狀態: authStatus='unauthenticated'};
@@ -102,7 +102,7 @@ graph TD
     G -- 失敗 --> J{清除 localStorage 中的 Token};
     J --> K{更新狀態: authStatus='unauthenticated', error='Token 無效/過期'}; 
     K --> L[UI: 顯示登入頁面];
-```
+````
 
 ---
 
