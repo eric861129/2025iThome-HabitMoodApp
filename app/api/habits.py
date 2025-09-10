@@ -5,6 +5,7 @@ from app.extensions import db
 from app.models import Habit, HabitLog
 from app.schemas import HabitSchema, HabitLogSchema
 from marshmallow import ValidationError
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 habits_bp = Blueprint('habits_bp', __name__, url_prefix='/api/v1/habits')
@@ -14,17 +15,19 @@ habit_log_schema = HabitLogSchema()
 
 
 @habits_bp.route('', methods=['GET'])
+@jwt_required()
 def list_habits():
     """取得所有習慣"""
-    user_id = 1  # noqa: F841
+    user_id = get_jwt_identity()
     habits = Habit.query.filter_by(user_id=user_id).all()
     return jsonify(habits_schema.dump(habits)), 200
 
 
 @habits_bp.route('', methods=['POST'])
+@jwt_required()
 def create_habit():
     """建立新習慣"""
-    user_id = 1  # noqa: F841
+    user_id = get_jwt_identity()
     json_data = request.get_json()
 
     try:
@@ -41,9 +44,10 @@ def create_habit():
 
 
 @habits_bp.route('/<int:habit_id>', methods=['GET'])
+@jwt_required()
 def get_habit(habit_id):
     """取得特定習慣"""
-    user_id = 1  # noqa: F841
+    user_id = get_jwt_identity()
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -53,9 +57,10 @@ def get_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>', methods=['PUT'])
+@jwt_required()
 def update_habit(habit_id):
     """更新特定習慣"""
-    user_id = 1  # noqa: F841
+    user_id = get_jwt_identity()
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -79,9 +84,10 @@ def update_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>', methods=['DELETE'])
+@jwt_required()
 def delete_habit(habit_id):
     """刪除特定習慣"""
-    user_id = 1  # noqa: F841
+    user_id = get_jwt_identity()
     habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
 
     if not habit:
@@ -94,9 +100,11 @@ def delete_habit(habit_id):
 
 
 @habits_bp.route('/<int:habit_id>/track', methods=['POST'])
+@jwt_required()
 def track_habit(habit_id):
     """追蹤習慣"""
-    user_id = 1  # noqa: F841
+    # 雖然這個函式沒有直接用到 user_id，但加上 JWT 保護可以確保只有登入的使用者才能追蹤
+    # user_id = get_jwt_identity()
     json_data = request.get_json()
     try:
         new_log = habit_log_schema.load(json_data)
