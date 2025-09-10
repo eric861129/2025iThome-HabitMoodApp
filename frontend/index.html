@@ -1,27 +1,71 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MindTrack - 你的個人成長夥伴</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Lato:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Chart.js for data visualization -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- App Root: All views are managed within this container -->
-    <div id="app-root"></div>
+</head>
+<body>
 
-    <!-- Template: Main Application View -->
-    <template id="main-app-template">
+    <!-- Authentication Page: Contains Login and Register forms -->
+    <div id="auth-page-container" style="display: none;">
+        <div class="auth-layout">
+            <div class="auth-card">
+                <div class="logo-container">
+                    <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 90 L30 30 L50 70 L70 30 L90 90" stroke="var(--primary-color)" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h2>MindTrack</h2>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">電子郵件</label>
+                        <input type="email" id="login-email" name="email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">密碼</label>
+                        <input type="password" id="login-password" name="password" required autocomplete="current-password">
+                    </div>
+                    <div id="login-error" class="error-message"></div>
+                    <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">登入</button>
+                </form>
+
+                <!-- Register Form (initially hidden) -->
+                <form id="register-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="register-username">使用者名稱</label>
+                        <input type="text" id="register-username" name="username" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">電子郵件</label>
+                        <input type="email" id="register-email" name="email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">密碼</label>
+                        <input type="password" id="register-password" name="password" required autocomplete="new-password">
+                    </div>
+                    <div id="register-error" class="error-message"></div>
+                    <button type="submit" class="btn btn-primary btn-block" id="register-submit-btn">註冊</button>
+                </form>
+
+                <div class="auth-form-footer">
+                    <p id="toggle-to-register">還沒有帳號嗎？ <a href="#">立即註冊</a></p>
+                    <p id="toggle-to-login" style="display: none;">已經有帳號了？ <a href="#">前往登入</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Page -->
+    <div id="app-page-container" style="display: none;">
         <div class="app-layout">
-            <!-- 側邊導覽列 (Side Navigation) -->
             <aside class="sidebar-nav">
                 <div class="logo-container">
                     <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -30,101 +74,40 @@
                 </div>
                 <nav>
                     <ul class="nav-list" aria-label="主要導覽">
-                        <li class="nav-item active">
-                            <a href="#dashboard" data-page="dashboard-page">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M4 13h6v8H4v-8zm0-10h6v8H4V3zm10 6h6v8h-6V9zm0-6h6v4h-6V3z"></path></svg>
-                                <span>儀表板</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#review" data-page="review-page">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v5h-2V7zm0 6h2v2h-2v-2z"></path></svg>
-                                <span>回顧</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#settings" data-page="settings-page">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="nav-icon"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12-.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59-1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
-                                <span>設定</span>
-                            </a>
-                        </li>
+                        <li class="nav-item active"><a href="#dashboard" data-page="dashboard-page">...</a></li>
+                        <li class="nav-item"><a href="#review" data-page="review-page">...</a></li>
+                        <li class="nav-item"><a href="#settings" data-page="settings-page">...</a></li>
                     </ul>
                 </nav>
                 <div class="sidebar-footer">
+                    <div id="user-profile-display"></div>
                     <button class="btn" id="logout-btn">登出</button>
                 </div>
             </aside>
-
-            <!-- 主要內容區域 (Main Content Area) -->
             <main class="main-content">
-                <!-- Page: 儀表板 (Dashboard) -->
                 <section id="dashboard-page" class="page-content">
                     <header class="page-header">
                         <div>
                             <h1 id="page-title">今天的進度</h1>
                             <p id="page-subtitle" class="subtitle"></p>
                         </div>
-                        <button class="btn btn-primary" id="add-habit-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            新增習慣
-                        </button>
+                        <button class="btn btn-primary" id="add-habit-btn">新增習慣</button>
                     </header>
                     <div class="habit-list-container"></div>
                     <div class="mood-tracker-container"></div>
-
-          <!-- Insight Chart Container -->
-          <section class="chart-container">
-            <h2>關聯性洞察</h2>
-            <canvas id="insightChart" role="img" aria-label="心情趨勢與習慣完成關聯圖表">
-              <p>您的瀏覽器不支援圖表顯示，此處為心情與習慣的關聯性數據圖表。</p>
-            </canvas>
-          </section>
-          <!-- End Insight Chart Container -->
-
-          <!-- Insight Chart Container -->
-          <section class="chart-container">
-            <h2>關聯性洞察</h2>
-            <canvas id="insightChart" role="img" aria-label="心情趨勢與習慣完成關聯圖表">
-              <p>您的瀏覽器不支援圖表顯示，此處為心情與習慣的關聯性數據圖表。</p>
-            </canvas>
-          </section>
-          <!-- End Insight Chart Container -->
+                    <section class="chart-container">
+                        <h2>關聯性洞察</h2>
+                        <canvas id="insightChart" role="img"></canvas>
+                    </section>
                 </section>
-
-                <!-- Page: 回顧 (Review) -->
-                <section id="review-page" class="page-content hidden">
-                    <!-- ... content from original file ... -->
-                </section>
-
-                <!-- Page: 設定 (Settings) -->
-                <section id="settings-page" class="page-content hidden">
-                    <!-- ... content from original file ... -->
-                </section>
+                <section id="review-page" class="page-content hidden">...</section>
+                <section id="settings-page" class="page-content hidden">...</section>
             </main>
         </div>
-    </template>
+    </div>
 
-    <!-- Template: Authentication View -->
-    <template id="auth-template">
-        <div class="auth-layout">
-            <div class="auth-card">
-                <div class="logo-container">
-                    <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                         <path d="M10 90 L30 30 L50 70 L70 30 L90 90" stroke="var(--primary-color)" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <h2>MindTrack</h2>
-                </div>
-                
-                <!-- Auth content will be injected here -->
-                <div id="auth-content"></div>
-
-                <div class="auth-form-footer"></div>
-            </div>
-        </div>
-    </template>
-
+    <!-- The main script file is now js/main.js -->
     <script src="js/main.js" type="module" defer></script>
+
 </body>
+</html>
