@@ -35,7 +35,7 @@ def create_habit():
         new_habit = habit_schema.load(json_data)
         new_habit.user_id = user_id  # 設置 user_id
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return jsonify(err.messages), 422
 
     db.session.add(new_habit)
     db.session.commit()
@@ -72,7 +72,7 @@ def update_habit(habit_id):
         # 驗證和反序列化，partial=True 允許部分更新
         updated_data = habit_schema.load(json_data, partial=True)
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return jsonify(err.messages), 422
 
     # 更新 habit 物件
     for key, value in updated_data.items():
@@ -110,7 +110,7 @@ def track_habit(habit_id):
         new_log = habit_log_schema.load(json_data)
         new_log.habit_id = habit_id
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return jsonify(err.messages), 422
 
     # 檢查是否已存在相同日期的紀錄
     existing_log = HabitLog.query.filter_by(
