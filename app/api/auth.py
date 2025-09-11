@@ -3,13 +3,17 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import ValidationError
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity
+)
 from app.extensions import db
 from app.models import User
 from app.schemas import UserSchema
 
+
 auth_bp = Blueprint('auth_bp', __name__, url_prefix='/api/v1')
 user_schema = UserSchema()
+
 
 @auth_bp.route('/auth/register', methods=['POST'])
 def register_user():
@@ -41,6 +45,7 @@ def register_user():
 
     return jsonify(user_schema.dump(new_user)), 201
 
+
 @auth_bp.route('/auth/login', methods=['POST'])
 def login_user():
     """使用者登入並返回 JWT"""
@@ -58,6 +63,7 @@ def login_user():
         return jsonify(user=user_schema.dump(user), token=access_token), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
+
 
 @auth_bp.route('/users/me', methods=['GET'])
 @jwt_required()

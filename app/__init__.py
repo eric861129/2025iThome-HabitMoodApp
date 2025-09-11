@@ -6,8 +6,6 @@ from flask_swagger_ui import get_swaggerui_blueprint
 import os
 import click
 
-from flask_jwt_extended import JWTManager
-
 # Define the path to your OpenAPI spec file
 SWAGGER_URL = '/api/docs'
 
@@ -63,7 +61,7 @@ def create_app(config_object=None):
 
         click.echo("--- 資料庫中的使用者 ---")
         for user in users:
-            click.echo(f"ID: {user.id}, Username: {user.username}, Email: {user.email}")
+            click.echo(f"ID: {user.id}, Username: {user.username}, Email: {user.email}")  # noqa: E501
             click.echo(f"  Password Hash: {user.password_hash}")
         click.echo("------------------------")
 
