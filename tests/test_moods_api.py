@@ -63,7 +63,7 @@ def test_create_mood_log_invalid_rating(auth_client):
     )
     assert response.status_code == 400
     assert "rating" in response.json
-    assert ("Must be greater than or equal to 1 and less than or equal to 5." 
+    assert ("Must be greater than or equal to 1 and less than or equal to 5."
             in response.json["rating"])
 
     response = client.post(
@@ -77,7 +77,7 @@ def test_create_mood_log_invalid_rating(auth_client):
     )
     assert response.status_code == 400
     assert "rating" in response.json
-    assert ("Must be greater than or equal to 1 and less than or equal to 5." 
+    assert ("Must be greater than or equal to 1 and less than or equal to 5."
             in response.json["rating"])
 
 
@@ -195,8 +195,12 @@ def test_get_mood_logs(auth_client):
     assert len(response.json) >= 2  # May have other mood logs from other tests
 
     # Check if the created mood logs are in the response
-    today_log = next((log for log in response.json if log["log_date"] == today), None)
-    yesterday_log = next((log for log in response.json if log["log_date"] == yesterday), None)
+    today_log = next(
+        (log for log in response.json if log["log_date"] == today), None
+    )
+    yesterday_log = next(
+        (log for log in response.json if log["log_date"] == yesterday), None
+    )
 
     assert today_log is not None
     assert today_log["rating"] == 4
@@ -222,7 +226,7 @@ def test_unauthorized_access_moods(client):
 
     # Attempt to update mood log without authentication
     response = client.put(
-        "/api/v1/moods/1",  # Use a dummy ID as it should fail before reaching ID check
+        "/api/v1/moods/1",  # Use a dummy ID
         json={
             "rating": 2,
             "notes": "Unauthorized update"

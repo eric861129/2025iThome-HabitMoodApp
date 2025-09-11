@@ -35,7 +35,9 @@ class HabitLogSchema(ma.SQLAlchemyAutoSchema):
 
 class MoodLogSchema(ma.SQLAlchemyAutoSchema):
     log_date = fields.Date(required=True)
-    rating = fields.Integer(required=True, validate=validate.Range(min=1, max=5))
+    rating = fields.Integer(
+        required=True, validate=validate.Range(min=1, max=5)
+    )
     notes = fields.Str(required=False, allow_none=True)
     user_id = fields.Integer(load_only=True, required=False)  # JWT
 
