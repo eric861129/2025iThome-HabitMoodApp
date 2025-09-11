@@ -1,6 +1,7 @@
 import pytest  # noqa: F401
 from app.models import MoodLog
 from datetime import date, timedelta
+from app.extensions import db
 
 
 @pytest.fixture
@@ -43,7 +44,7 @@ def test_create_mood_log(auth_client):
     assert response.json["notes"] == "Feeling good today!"
 
     mood_log_id = response.json["id"]
-    mood_log = MoodLog.query.get(mood_log_id)
+    mood_log = db.session.get(MoodLog, mood_log_id)
     assert mood_log is not None
     assert mood_log.rating == 4
     assert mood_log.notes == "Feeling good today!"
@@ -138,7 +139,7 @@ def test_update_mood_log(auth_client):
     assert response.json["rating"] == 5
     assert response.json["notes"] == "Updated notes"
 
-    mood_log = MoodLog.query.get(mood_log_id)
+    mood_log = db.session.get(MoodLog, mood_log_id)
     assert mood_log is not None
     assert mood_log.rating == 5
     assert mood_log.notes == "Updated notes"
