@@ -2,7 +2,7 @@
 
 from .extensions import ma
 from .models import User, Habit, HabitLog, MoodLog
-from marshmallow import fields
+from marshmallow import fields, validate
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
@@ -34,7 +34,12 @@ class HabitLogSchema(ma.SQLAlchemyAutoSchema):
 
 
 class MoodLogSchema(ma.SQLAlchemyAutoSchema):
+    log_date = fields.Date(required=True)
+    rating = fields.Integer(required=True, validate=validate.Range(min=1, max=5))
+    notes = fields.Str(required=False, allow_none=True)
+    user_id = fields.Integer(load_only=True, required=False)  # JWT
+
     class Meta:
         model = MoodLog
-        load_instance = True
+        load_instance = False  # Returns dict on load
         include_fk = True  # 包含 user_id

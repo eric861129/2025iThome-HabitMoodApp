@@ -59,7 +59,7 @@ def login_user():
     user = User.query.filter_by(email=email).first()
 
     if user and check_password_hash(user.password_hash, password):
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify(user=user_schema.dump(user), token=access_token), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401

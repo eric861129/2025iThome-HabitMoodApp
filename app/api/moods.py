@@ -30,8 +30,13 @@ def create_mood():
     json_data = request.get_json()
 
     try:
-        new_mood = mood_log_schema.load(json_data)
-        new_mood.user_id = user_id
+        data = mood_log_schema.load(json_data)
+        new_mood = MoodLog(
+            user_id=user_id,
+            rating=data['rating'],
+            notes=data.get('notes'),
+            log_date=data['log_date']
+        )
     except ValidationError as err:
         return jsonify(err.messages), 400
 
@@ -76,11 +81,12 @@ def update_mood(mood_id):
     json_data = request.get_json()
 
     try:
-        updated_data = mood_log_schema.load(json_data, partial=True)
+        # Load and validate the data, ensuring it returns a dictionary
+        validated_data = mood_log_schema.load(json_data, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 400
 
-    for key, value in updated_data.items():
+    for key, value in validated_data.items():
         setattr(mood, key, value)
 
     db.session.commit()
