@@ -222,7 +222,7 @@ def test_unauthorized_access_moods(client):
 
     # Attempt to update mood log without authentication
     response = client.put(
-        f"/api/v1/moods/1",  # Use a dummy ID as it should fail before reaching ID check
+        "/api/v1/moods/1",  # Use a dummy ID as it should fail before reaching ID check
         json={
             "rating": 2,
             "notes": "Unauthorized update"
