@@ -22,14 +22,14 @@ MindTrack 是一個旨在幫助使用者追蹤好習慣、記錄每日心情，�
 
 ## 技術棧與架構理念
 
-| 類別 | 技術 |
-| --- | --- |
-| **後端** | Python, Flask, Flask-SQLAlchemy |
-| **前端** | HTML5, CSS3, JavaScript (原生) |
-| **資料庫** | SQLite (開發), PostgreSQL (生產) |
-| **API 與結構** | Flask-RESTful, Marshmallow |
-| **資料庫遷移** | Flask-Migrate (Alembic) |
-| **測試** | Pytest |
+| 類別           | 技術                             |
+| -------------- | -------------------------------- |
+| **後端**       | Python, Flask, Flask-SQLAlchemy  |
+| **前端**       | HTML5, CSS3, JavaScript (原生)   |
+| **資料庫**     | SQLite (開發), PostgreSQL (生產) |
+| **API 與結構** | Flask-RESTful, Marshmallow       |
+| **資料庫遷移** | Flask-Migrate (Alembic)          |
+| **測試**       | Pytest                           |
 
 本專案採用**前後端分離 (Headless)** 架構，將前端與後端獨立開發。這種方法允許獨立的開發與部署流程，提供了極大的靈活性與可擴展性。後端是一個模組化的 Flask 應用程式，使用 Blueprints 進行組織，以實現清晰的關注點分離。
 
